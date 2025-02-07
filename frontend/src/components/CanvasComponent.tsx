@@ -7,10 +7,18 @@ interface BBox {
   cy: number;
 }
 
-const CanvasComponent: React.FC = () => {
+interface CanvasComponentProps {
+  selectedNumber: string;
+  selectedFont: string;
+  selectedSize: string;
+}
+
+const CanvasComponent: React.FC<CanvasComponentProps> = ({
+  selectedNumber,
+  selectedFont,
+  selectedSize,
+}) => {
   const canvasSize = 800;
-  const fontSize = 550;
-  const textContent = "20";
   const [textPath, setTextPath] = useState<string>("");
   const [pathBBox, setPathBBox] = useState<BBox | null>(null);
   const [fontLoaded, setFontLoaded] = useState(false);
@@ -19,15 +27,16 @@ const CanvasComponent: React.FC = () => {
     y: canvasSize / 2 - 50,
   });
 
-  // Load the font, generate the SVG path and bounding box.
+  // Load the font, generate the SVG path and bounding box based on the selected font
   useEffect(() => {
-    opentype.load("/fonts/arial_black.ttf", (err: any, font: any) => {
+    const fontPath = `/fonts/${selectedFont}`;
+    opentype.load(fontPath, (err: any, font: any) => {
       if (err) {
         console.error("Font load error:", err);
         return;
       }
       try {
-        const pathObj = font.getPath(textContent, 0, 0, fontSize);
+        const pathObj = font.getPath(selectedNumber, 0, 0, selectedSize);
         const bbox = pathObj.getBoundingBox();
         const cx = (bbox.x1 + bbox.x2) / 2;
         const cy = (bbox.y1 + bbox.y2) / 2;
@@ -44,7 +53,7 @@ const CanvasComponent: React.FC = () => {
         console.error("Path generation error:", error);
       }
     });
-  }, [textContent, fontSize]);
+  }, [selectedNumber, selectedFont, selectedSize]); // Re-run whenever the selected number or font changes
 
   // Handle dragging of the blue rectangle
   const handleDragMove = (e: any) => {
@@ -70,7 +79,6 @@ const CanvasComponent: React.FC = () => {
         height={canvasSize}
         style={{ backgroundColor: "white", border: "4px solid black" }}
       >
-        {/* Base Layer - Background and interactive hit area */}
         <Layer>
           <Rect
             x={0}
@@ -80,21 +88,19 @@ const CanvasComponent: React.FC = () => {
             fill="white"
           />
 
-          {/* Nearly invisible drag handle (full interactive area) */}
+          {/* Invisible drag handle */}
           <Rect
             {...blueRectPos}
             width={200}
             height={100}
-            fill="rgba(0,0,0,0.001)" // Key fix: minimal alpha for hit detection
+            fill="rgba(0,0,0,0.001)"
             draggable
             onDragMove={handleDragMove}
             listening={true}
           />
         </Layer>
 
-        {/* Visual Layer - Rectangle parts */}
         <Layer>
-          {/* Low-opacity outer part */}
           <Rect
             {...blueRectPos}
             width={200}
@@ -103,8 +109,6 @@ const CanvasComponent: React.FC = () => {
             opacity={0.1}
             listening={false}
           />
-
-          {/* Full-opacity inner part (masked to text) */}
           {fontLoaded && textPath && pathBBox && (
             <>
               <Path
@@ -127,7 +131,6 @@ const CanvasComponent: React.FC = () => {
           )}
         </Layer>
 
-        {/* Top Layer - Red outline */}
         <Layer>
           {fontLoaded && textPath && pathBBox && (
             <Path
