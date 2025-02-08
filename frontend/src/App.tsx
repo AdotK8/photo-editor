@@ -9,6 +9,7 @@ function App() {
     selectedSize: 550, // Initial font Size
     offsetX: 0, // Initial offset x-axis
     offsetY: 0, // Initial offset y-axis
+    rotation: 0, // Initial rotation
   });
 
   // Function to update both number and font
@@ -33,6 +34,7 @@ function App() {
         selectedSize={numberDetails.selectedSize}
         offsetX={numberDetails.offsetX}
         offsetY={numberDetails.offsetY}
+        rotation={numberDetails.rotation}
         updateNumberDetails={updateNumberDetails}
       />
 
@@ -44,6 +46,7 @@ function App() {
           selectedSize={numberDetails.selectedSize}
           offsetX={numberDetails.offsetX}
           offsetY={numberDetails.offsetY}
+          rotation={numberDetails.rotation}
         />
       </div>
     </div>

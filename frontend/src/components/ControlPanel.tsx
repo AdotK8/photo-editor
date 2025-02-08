@@ -6,6 +6,7 @@ interface ControlPanelProps {
   selectedSize: string | number;
   offsetX: number;
   offsetY: number;
+  rotation: number;
   updateNumberDetails: (key: string, value: string | number) => void;
 }
 
@@ -15,6 +16,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   selectedSize,
   offsetX,
   offsetY,
+  rotation,
   updateNumberDetails,
 }) => {
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -61,10 +63,24 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateNumberDetails("offsetY", value);
   };
 
-  const center = () => {
+  const reset = () => {
     const value = 0;
     updateNumberDetails("offsetX", value);
     updateNumberDetails("offsetY", value);
+    updateNumberDetails("rotation", value);
+    updateNumberDetails("selectedNumber", 20);
+    updateNumberDetails("selectedSize", 550);
+    updateNumberDetails("selectedFont", "GasoekOne.ttf");
+  };
+
+  const rotateLeft = () => {
+    const value = rotation + 1;
+    updateNumberDetails("rotation", value);
+  };
+
+  const rotateRight = () => {
+    const value = rotation + -1;
+    updateNumberDetails("rotation", value);
   };
 
   return (
@@ -139,7 +155,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       <button onClick={moveRight}>Move Right</button>
       <button onClick={moveUp}>Move Up</button>
       <button onClick={moveDown}>Move Down</button>
-      <button onClick={center}>Center</button>
+      <button onClick={rotateLeft}>Rotate Left</button>
+      <button onClick={rotateRight}>Rotate Right</button>
+      <button onClick={reset}>Reset</button>
     </div>
   );
 };

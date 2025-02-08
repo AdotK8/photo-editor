@@ -13,6 +13,7 @@ interface CanvasComponentProps {
   selectedSize: number;
   offsetX: number;
   offsetY: number;
+  rotation: number;
 }
 
 const CanvasComponent: React.FC<CanvasComponentProps> = ({
@@ -21,6 +22,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   selectedSize,
   offsetX,
   offsetY,
+  rotation,
 }) => {
   const canvasSize = 800;
   const [textPath, setTextPath] = useState<string>("");
@@ -125,6 +127,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 y={canvasSize / 2 - pathBBox.cy}
                 fill="white"
                 listening={false}
+                rotation={rotation}
               />
               <Rect
                 {...blueRectPos}
@@ -148,6 +151,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
               stroke="black"
               strokeWidth={2}
               listening={false}
+              rotation={rotation}
             />
           )}
         </Layer>
