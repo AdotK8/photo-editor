@@ -1,23 +1,30 @@
 import React from "react";
 
 interface ControlPanelProps {
-  selectedNumber: string;
+  selectedNumber: string | number;
   selectedFont: string;
-  selectedSize: string;
-  updateNumberDetails: (key: string, value: string) => void;
+  selectedSize: string | number;
+  offsetX: number;
+  offsetY: number;
+  updateNumberDetails: (key: string, value: string | number) => void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
   selectedNumber,
   selectedFont,
   selectedSize,
+  offsetX,
+  offsetY,
   updateNumberDetails,
 }) => {
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     // Allow only numeric values
     if (/^\d*$/.test(value)) {
-      updateNumberDetails("selectedNumber", value);
+      updateNumberDetails(
+        "selectedNumber",
+        value === "" ? "" : parseInt(value)
+      );
     }
   };
 
@@ -25,13 +32,39 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     const value = e.target.value;
     // Allow only numeric values
     if (/^\d*$/.test(value)) {
-      updateNumberDetails("selectedSize", value);
+      updateNumberDetails("selectedSize", value === "" ? "" : parseInt(value));
     }
   };
 
   const handleFontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     updateNumberDetails("selectedFont", value);
+  };
+
+  const moveLeft = () => {
+    const value = offsetX + 1;
+    updateNumberDetails("offsetX", value);
+  };
+
+  const moveRight = () => {
+    const value = offsetX - 1;
+    updateNumberDetails("offsetX", value);
+  };
+
+  const moveUp = () => {
+    const value = offsetY + 1;
+    updateNumberDetails("offsetY", value);
+  };
+
+  const moveDown = () => {
+    const value = offsetY - 1;
+    updateNumberDetails("offsetY", value);
+  };
+
+  const center = () => {
+    const value = 0;
+    updateNumberDetails("offsetX", value);
+    updateNumberDetails("offsetY", value);
   };
 
   return (
@@ -101,6 +134,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="arial_black.ttf">Arial Black</option>
         {/* Add more fonts here */}
       </select>
+
+      <button onClick={moveLeft}>Move Left</button>
+      <button onClick={moveRight}>Move Right</button>
+      <button onClick={moveUp}>Move Up</button>
+      <button onClick={moveDown}>Move Down</button>
+      <button onClick={center}>Center</button>
     </div>
   );
 };

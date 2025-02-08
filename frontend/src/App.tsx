@@ -4,13 +4,15 @@ import ControlPanel from "./components/ControlPanel";
 
 function App() {
   const [numberDetails, setNumberDetails] = useState({
-    selectedNumber: "20", // Initial number
+    selectedNumber: 20, // Initial number
     selectedFont: "GasoekOne.ttf", // Initial font
-    selectedSize: "500", // Initial font size
+    selectedSize: 550, // Initial font Size
+    offsetX: 0, // Initial offset x-axis
+    offsetY: 0, // Initial offset y-axis
   });
 
-  // Function to update the numberDetails state
-  const updateNumberDetails = (key: string, value: string) => {
+  // Function to update both number and font
+  const updateNumberDetails = (key: string, value: string | number) => {
     setNumberDetails((prevDetails) => ({
       ...prevDetails,
       [key]: value,
@@ -18,21 +20,32 @@ function App() {
   };
 
   return (
-    <div style={{ display: "flex", flexDirection: "row" }}>
+    <div
+      style={{
+        display: "flex",
+        height: "100vh",
+      }}
+    >
       {/* Control Panel */}
       <ControlPanel
         selectedNumber={numberDetails.selectedNumber}
         selectedFont={numberDetails.selectedFont}
         selectedSize={numberDetails.selectedSize}
+        offsetX={numberDetails.offsetX}
+        offsetY={numberDetails.offsetY}
         updateNumberDetails={updateNumberDetails}
       />
 
-      {/* Canvas Component */}
-      <CanvasComponent
-        selectedNumber={numberDetails.selectedNumber}
-        selectedFont={numberDetails.selectedFont}
-        selectedSize={numberDetails.selectedSize}
-      />
+      {/* Canvas */}
+      <div style={{ flexGrow: 1 }}>
+        <CanvasComponent
+          selectedNumber={numberDetails.selectedNumber}
+          selectedFont={numberDetails.selectedFont}
+          selectedSize={numberDetails.selectedSize}
+          offsetX={numberDetails.offsetX}
+          offsetY={numberDetails.offsetY}
+        />
+      </div>
     </div>
   );
 }

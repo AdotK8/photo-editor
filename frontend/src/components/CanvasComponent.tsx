@@ -8,15 +8,19 @@ interface BBox {
 }
 
 interface CanvasComponentProps {
-  selectedNumber: string;
+  selectedNumber: number;
   selectedFont: string;
-  selectedSize: string;
+  selectedSize: number;
+  offsetX: number;
+  offsetY: number;
 }
 
 const CanvasComponent: React.FC<CanvasComponentProps> = ({
   selectedNumber,
   selectedFont,
   selectedSize,
+  offsetX,
+  offsetY,
 }) => {
   const canvasSize = 800;
   const [textPath, setTextPath] = useState<string>("");
@@ -36,10 +40,15 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         return;
       }
       try {
-        const pathObj = font.getPath(selectedNumber, 0, 0, selectedSize);
+        const pathObj = font.getPath(
+          String(selectedNumber),
+          0,
+          0,
+          selectedSize
+        );
         const bbox = pathObj.getBoundingBox();
-        const cx = (bbox.x1 + bbox.x2) / 2;
-        const cy = (bbox.y1 + bbox.y2) / 2;
+        const cx = (bbox.x1 + bbox.x2) / 2 + offsetX;
+        const cy = (bbox.y1 + bbox.y2) / 2 + offsetY;
         setPathBBox({ cx, cy });
         const svgString = pathObj.toSVG();
         const parser = new DOMParser();
@@ -53,9 +62,8 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         console.error("Path generation error:", error);
       }
     });
-  }, [selectedNumber, selectedFont, selectedSize]); // Re-run whenever the selected number or font changes
+  }, [selectedNumber, selectedFont, selectedSize, offsetX, offsetY]);
 
-  // Handle dragging of the blue rectangle
   const handleDragMove = (e: any) => {
     setBlueRectPos({
       x: e.target.x(),
