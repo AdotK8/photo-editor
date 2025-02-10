@@ -1,6 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Stage, Layer, Rect, Path } from "react-konva";
+import React, { useEffect, useState, useRef } from "react";
+import {
+  Stage,
+  Layer,
+  Rect,
+  Path,
+  Image as KonvaImage,
+  Transformer,
+} from "react-konva";
 import * as opentype from "opentype.js";
+import Konva from "konva";
 
 interface BBox {
   cx: number;
@@ -16,6 +24,13 @@ interface CanvasComponentProps {
   rotation: number;
 }
 
+interface ImagePosition {
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
 const CanvasComponent: React.FC<CanvasComponentProps> = ({
   selectedNumber,
   selectedFont,
@@ -28,12 +43,18 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const [textPath, setTextPath] = useState<string>("");
   const [pathBBox, setPathBBox] = useState<BBox | null>(null);
   const [fontLoaded, setFontLoaded] = useState(false);
-  const [blueRectPos, setBlueRectPos] = useState<{ x: number; y: number }>({
-    x: canvasSize / 2 - 50,
+  const [image, setImage] = useState<HTMLImageElement | null>(null);
+  const [imagePos, setImagePos] = useState<ImagePosition>({
+    x: canvasSize / 2 - 100,
     y: canvasSize / 2 - 50,
+    width: 200,
+    height: 100,
   });
 
-  // Load the font, generate the SVG path and bounding box based on the selected font
+  const trRef = useRef<Konva.Transformer>(null);
+  const imageRef = useRef<Konva.Image>(null);
+
+  // Load font and generate path
   useEffect(() => {
     const fontPath = `/fonts/${selectedFont}`;
     opentype.load(fontPath, (err: any, font: any) => {
@@ -66,11 +87,39 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     });
   }, [selectedNumber, selectedFont, selectedSize, offsetX, offsetY]);
 
-  const handleDragMove = (e: any) => {
-    setBlueRectPos({
-      x: e.target.x(),
-      y: e.target.y(),
-    });
+  // Load image
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/images/image1.png";
+    img.onload = () => {
+      setImage(img);
+      setTimeout(() => {
+        trRef.current?.nodes([imageRef.current!]);
+        trRef.current?.getLayer()?.batchDraw();
+      }, 50);
+    };
+  }, []);
+
+  // Update transformer when image changes
+  useEffect(() => {
+    if (imageRef.current && trRef.current) {
+      trRef.current.nodes([imageRef.current]);
+      trRef.current.getLayer()?.batchDraw();
+    }
+  }, [image]);
+
+  const handleTransformEnd = () => {
+    if (imageRef.current) {
+      const node = imageRef.current;
+      setImagePos({
+        x: node.x(),
+        y: node.y(),
+        width: node.width() * node.scaleX(),
+        height: node.height() * node.scaleY(),
+      });
+      node.scaleX(1);
+      node.scaleY(1);
+    }
   };
 
   return (
@@ -97,29 +146,10 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
             height={canvasSize}
             fill="white"
           />
-
-          {/* Invisible drag handle */}
-          <Rect
-            {...blueRectPos}
-            width={200}
-            height={100}
-            fill="rgba(0,0,0,0.001)"
-            draggable
-            onDragMove={handleDragMove}
-            listening={true}
-          />
         </Layer>
 
         <Layer>
-          <Rect
-            {...blueRectPos}
-            width={200}
-            height={100}
-            fill="blue"
-            opacity={0.1}
-            listening={false}
-          />
-          {fontLoaded && textPath && pathBBox && (
+          {fontLoaded && textPath && pathBBox && image && (
             <>
               <Path
                 data={textPath}
@@ -129,14 +159,23 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 listening={false}
                 rotation={rotation}
               />
-              <Rect
-                {...blueRectPos}
-                width={200}
-                height={100}
-                fill="blue"
+              <KonvaImage
+                image={image}
+                ref={imageRef}
+                {...imagePos}
                 globalCompositeOperation="source-in"
-                opacity={1}
-                listening={false}
+                draggable
+                onDragEnd={handleTransformEnd}
+                onTransformEnd={handleTransformEnd}
+              />
+              <Transformer
+                ref={trRef}
+                boundBoxFunc={(oldBox, newBox) => {
+                  if (newBox.width < 50 || newBox.height < 50) {
+                    return oldBox;
+                  }
+                  return newBox;
+                }}
               />
             </>
           )}
