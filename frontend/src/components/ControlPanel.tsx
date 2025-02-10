@@ -43,44 +43,37 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateNumberDetails("selectedFont", value);
   };
 
-  const moveLeft = () => {
-    const value = offsetX + 1;
-    updateNumberDetails("offsetX", value);
+  const move = (direction: "left" | "right" | "up" | "down") => {
+    switch (direction) {
+      case "left":
+        updateNumberDetails("offsetX", offsetX + 1);
+        break;
+      case "right":
+        updateNumberDetails("offsetX", offsetX - 1);
+        break;
+      case "up":
+        updateNumberDetails("offsetY", offsetY + 1);
+        break;
+      case "down":
+        updateNumberDetails("offsetY", offsetY - 1);
+        break;
+      default:
+        break;
+    }
   };
 
-  const moveRight = () => {
-    const value = offsetX - 1;
-    updateNumberDetails("offsetX", value);
-  };
-
-  const moveUp = () => {
-    const value = offsetY + 1;
-    updateNumberDetails("offsetY", value);
-  };
-
-  const moveDown = () => {
-    const value = offsetY - 1;
-    updateNumberDetails("offsetY", value);
+  const rotate = (direction: "left" | "right") => {
+    const value = direction === "left" ? rotation + 1 : rotation - 1;
+    updateNumberDetails("rotation", value);
   };
 
   const reset = () => {
-    const value = 0;
-    updateNumberDetails("offsetX", value);
-    updateNumberDetails("offsetY", value);
-    updateNumberDetails("rotation", value);
+    updateNumberDetails("offsetX", 0);
+    updateNumberDetails("offsetY", 0);
+    updateNumberDetails("rotation", 0);
     updateNumberDetails("selectedNumber", 20);
     updateNumberDetails("selectedSize", 550);
     updateNumberDetails("selectedFont", "GasoekOne.ttf");
-  };
-
-  const rotateLeft = () => {
-    const value = rotation + 1;
-    updateNumberDetails("rotation", value);
-  };
-
-  const rotateRight = () => {
-    const value = rotation + -1;
-    updateNumberDetails("rotation", value);
   };
 
   return (
@@ -151,12 +144,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         {/* Add more fonts here */}
       </select>
 
-      <button onClick={moveLeft}>Move Left</button>
-      <button onClick={moveRight}>Move Right</button>
-      <button onClick={moveUp}>Move Up</button>
-      <button onClick={moveDown}>Move Down</button>
-      <button onClick={rotateLeft}>Rotate Left</button>
-      <button onClick={rotateRight}>Rotate Right</button>
+      <button onClick={() => move("left")}>Move Left</button>
+      <button onClick={() => move("right")}>Move Right</button>
+      <button onClick={() => move("up")}>Move Up</button>
+      <button onClick={() => move("down")}>Move Down</button>
+      <button onClick={() => rotate("left")}>Rotate Left</button>
+      <button onClick={() => rotate("right")}>Rotate Right</button>
       <button onClick={reset}>Reset</button>
     </div>
   );
