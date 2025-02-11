@@ -1,6 +1,20 @@
 import React, { useState } from "react";
 import CanvasComponent from "./components/CanvasComponent";
 import ControlPanel from "./components/ControlPanel";
+import ImagePanel from "./components/ImagePanel";
+
+interface ImageData {
+  id: string;
+  url: string;
+  name: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation: number;
+  scaleX: number;
+  scaleY: number;
+}
 
 function App() {
   const [numberDetails, setNumberDetails] = useState({
@@ -49,6 +63,9 @@ function App() {
           rotation={numberDetails.rotation}
         />
       </div>
+
+      {/* Image Panel */}
+      <ImagePanel />
     </div>
   );
 }
