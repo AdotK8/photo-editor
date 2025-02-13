@@ -46,6 +46,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const [textPath, setTextPath] = useState<string>("");
   const [pathBBox, setPathBBox] = useState<BBox | null>(null);
   const [fontLoaded, setFontLoaded] = useState(false);
+  const outlineLayerRef = useRef<Konva.Layer>(null);
 
   // Initialize images state with preloaded images and a `selected` flag.
   const [images, setImages] = useState<ImageData[]>(() => {
@@ -164,6 +165,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     if (node) {
       const layer = node.getLayer();
       layer?.moveToTop();
+      outlineLayerRef.current?.moveToTop();
       transformerRefs.current[id]?.nodes([node]);
     }
   };
@@ -241,7 +243,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
           ))}
 
         {/* Outline (stroke) Path */}
-        <Layer>
+        <Layer ref={outlineLayerRef}>
           {fontLoaded && textPath && pathBBox && (
             <Path
               data={textPath}
