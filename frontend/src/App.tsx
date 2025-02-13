@@ -3,17 +3,14 @@ import CanvasComponent from "./components/CanvasComponent";
 import ControlPanel from "./components/ControlPanel";
 import ImagePanel from "./components/ImagePanel";
 
-interface ImageData {
-  id: string;
-  url: string;
-  name: string;
+export interface CustomImageData {
+  id: number;
+  image: HTMLImageElement;
   x: number;
   y: number;
   width: number;
   height: number;
-  rotation: number;
-  scaleX: number;
-  scaleY: number;
+  selected: boolean;
 }
 
 function App() {
@@ -24,6 +21,46 @@ function App() {
     offsetX: 0, // Initial offset x-axis
     offsetY: 0, // Initial offset y-axis
     rotation: 0, // Initial rotation
+  });
+
+  const canvasSize = 800;
+
+  const [images, setImages] = useState<CustomImageData[]>(() => {
+    const img1 = new Image();
+    img1.src = "/images/image1.png";
+    const img2 = new Image();
+    img2.src = "/images/image2.png";
+    const img3 = new Image();
+    img3.src = "/images/image3.png";
+    return [
+      {
+        id: 1,
+        image: img1,
+        x: canvasSize / 2 - 100,
+        y: canvasSize / 2 - 50,
+        width: 200,
+        height: 100,
+        selected: false,
+      },
+      {
+        id: 2,
+        image: img2,
+        x: canvasSize / 2 - 150,
+        y: canvasSize / 2 - 75,
+        width: 200,
+        height: 100,
+        selected: false,
+      },
+      {
+        id: 3,
+        image: img3,
+        x: canvasSize / 2 - 150,
+        y: canvasSize / 2 - 50,
+        width: 200,
+        height: 100,
+        selected: false,
+      },
+    ];
   });
 
   // Function to update both number and font
@@ -61,6 +98,8 @@ function App() {
           offsetX={numberDetails.offsetX}
           offsetY={numberDetails.offsetY}
           rotation={numberDetails.rotation}
+          images={images}
+          setImages={setImages}
         />
       </div>
 
