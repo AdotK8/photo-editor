@@ -24,11 +24,14 @@ interface CanvasComponentProps {
   rotation: number;
 }
 
-interface ImagePosition {
+interface ImageData {
+  id: number;
+  image: HTMLImageElement;
   x: number;
   y: number;
   width: number;
   height: number;
+  selected: boolean;
 }
 
 const CanvasComponent: React.FC<CanvasComponentProps> = ({
@@ -43,18 +46,53 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const [textPath, setTextPath] = useState<string>("");
   const [pathBBox, setPathBBox] = useState<BBox | null>(null);
   const [fontLoaded, setFontLoaded] = useState(false);
-  const [image, setImage] = useState<HTMLImageElement | null>(null);
-  const [imagePos, setImagePos] = useState<ImagePosition>({
-    x: canvasSize / 2 - 100,
-    y: canvasSize / 2 - 50,
-    width: 200,
-    height: 100,
+
+  // Initialize images state with preloaded images and a `selected` flag.
+  const [images, setImages] = useState<ImageData[]>(() => {
+    const img1 = new Image();
+    img1.src = "/images/image1.png";
+    const img2 = new Image();
+    img2.src = "/images/image2.png";
+    const img3 = new Image();
+    img3.src = "/images/image3.png";
+    return [
+      {
+        id: 1,
+        image: img1,
+        x: canvasSize / 2 - 100,
+        y: canvasSize / 2 - 50,
+        width: 200,
+        height: 100,
+        selected: false,
+      },
+      {
+        id: 2,
+        image: img2,
+        x: canvasSize / 2 - 150,
+        y: canvasSize / 2 - 75,
+        width: 200,
+        height: 100,
+        selected: false,
+      },
+      {
+        id: 3,
+        image: img3,
+        x: canvasSize / 2 - 150,
+        y: canvasSize / 2 - 50,
+        width: 200,
+        height: 100,
+        selected: false,
+      },
+    ];
   });
 
-  const trRef = useRef<Konva.Transformer>(null);
-  const imageRef = useRef<Konva.Image>(null);
+  // Refs for each image and its corresponding transformer, keyed by image id.
+  const imageRefs = useRef<{ [key: number]: Konva.Image | null }>({});
+  const transformerRefs = useRef<{ [key: number]: Konva.Transformer | null }>(
+    {}
+  );
 
-  // Load font and generate path
+  // Load font and generate the mask path.
   useEffect(() => {
     const fontPath = `/fonts/${selectedFont}`;
     opentype.load(fontPath, (err: any, font: any) => {
@@ -87,38 +125,46 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     });
   }, [selectedNumber, selectedFont, selectedSize, offsetX, offsetY]);
 
-  // Load image
+  // After mount (or images change), attach transformers for each image.
   useEffect(() => {
-    const img = new Image();
-    img.src = "/images/image1.png";
-    img.onload = () => {
-      setImage(img);
-      setTimeout(() => {
-        trRef.current?.nodes([imageRef.current!]);
-        trRef.current?.getLayer()?.batchDraw();
-      }, 50);
-    };
-  }, []);
+    images.forEach((img) => {
+      if (imageRefs.current[img.id] && transformerRefs.current[img.id]) {
+        transformerRefs.current[img.id]?.nodes([imageRefs.current[img.id]!]);
+        transformerRefs.current[img.id]?.getLayer()?.batchDraw();
+      }
+    });
+  }, [images]);
 
-  // Update transformer when image changes
-  useEffect(() => {
-    if (imageRef.current && trRef.current) {
-      trRef.current.nodes([imageRef.current]);
-      trRef.current.getLayer()?.batchDraw();
-    }
-  }, [image]);
-
-  const handleTransformEnd = () => {
-    if (imageRef.current) {
-      const node = imageRef.current;
-      setImagePos({
-        x: node.x(),
-        y: node.y(),
-        width: node.width() * node.scaleX(),
-        height: node.height() * node.scaleY(),
-      });
+  const handleTransformEnd = (id: number) => {
+    const node = imageRefs.current[id];
+    if (node) {
+      const newX = node.x();
+      const newY = node.y();
+      const newWidth = node.width() * node.scaleX();
+      const newHeight = node.height() * node.scaleY();
+      setImages((prev) =>
+        prev.map((img) =>
+          img.id === id
+            ? { ...img, x: newX, y: newY, width: newWidth, height: newHeight }
+            : img
+        )
+      );
+      // Reset the scaling factors.
       node.scaleX(1);
       node.scaleY(1);
+    }
+  };
+
+  // When an image is clicked, mark it as selected and unselect others.
+  const handleSelect = (id: number) => {
+    setImages((prev) =>
+      prev.map((img) => ({ ...img, selected: img.id === id }))
+    );
+    const node = imageRefs.current[id];
+    if (node) {
+      const layer = node.getLayer();
+      layer?.moveToTop();
+      transformerRefs.current[id]?.nodes([node]);
     }
   };
 
@@ -138,6 +184,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         height={canvasSize}
         style={{ backgroundColor: "white", border: "4px solid black" }}
       >
+        {/* Background Layer */}
         <Layer>
           <Rect
             x={0}
@@ -148,9 +195,13 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
           />
         </Layer>
 
-        <Layer>
-          {fontLoaded && textPath && pathBBox && image && (
-            <>
+        {/* Render each image on its own layer */}
+        {fontLoaded &&
+          textPath &&
+          pathBBox &&
+          images.map((img) => (
+            <Layer key={img.id}>
+              {/* Mask Path */}
               <Path
                 data={textPath}
                 x={canvasSize / 2 - pathBBox.cx}
@@ -159,28 +210,37 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 listening={false}
                 rotation={rotation}
               />
+              {/* Image */}
               <KonvaImage
-                image={image}
-                ref={imageRef}
-                {...imagePos}
+                image={img.image}
+                ref={(node) => (imageRefs.current[img.id] = node)}
+                x={img.x}
+                y={img.y}
+                width={img.width}
+                height={img.height}
                 globalCompositeOperation="source-in"
                 draggable
-                onDragEnd={handleTransformEnd}
-                onTransformEnd={handleTransformEnd}
+                onClick={() => handleSelect(img.id)}
+                onTap={() => handleSelect(img.id)}
+                onDragEnd={() => handleTransformEnd(img.id)}
+                onTransformEnd={() => handleTransformEnd(img.id)}
               />
-              <Transformer
-                ref={trRef}
-                boundBoxFunc={(oldBox, newBox) => {
-                  if (newBox.width < 50 || newBox.height < 50) {
-                    return oldBox;
-                  }
-                  return newBox;
-                }}
-              />
-            </>
-          )}
-        </Layer>
+              {/* Conditionally render the transformer only if this image is selected */}
+              {img.selected && (
+                <Transformer
+                  ref={(node) => (transformerRefs.current[img.id] = node)}
+                  boundBoxFunc={(oldBox, newBox) => {
+                    if (newBox.width < 50 || newBox.height < 50) {
+                      return oldBox;
+                    }
+                    return newBox;
+                  }}
+                />
+              )}
+            </Layer>
+          ))}
 
+        {/* Outline (stroke) Path */}
         <Layer>
           {fontLoaded && textPath && pathBBox && (
             <Path
@@ -188,9 +248,10 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
               x={canvasSize / 2 - pathBBox.cx}
               y={canvasSize / 2 - pathBBox.cy}
               stroke="black"
-              strokeWidth={2}
+              strokeWidth={4}
               listening={false}
               rotation={rotation}
+              globalCompositeOperation="source-over"
             />
           )}
         </Layer>
