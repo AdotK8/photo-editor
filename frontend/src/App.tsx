@@ -104,7 +104,7 @@ function App() {
       </div>
 
       {/* Image Panel */}
-      <ImagePanel />
+      <ImagePanel images={images} setImages={setImages} />
     </div>
   );
 }

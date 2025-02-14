@@ -1,8 +1,12 @@
 import React from "react";
+import { CustomImageData } from "../App";
 
-interface ImagePanelProps {}
+interface ImagePanelProps {
+  images: CustomImageData[];
+  setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
+}
 
-const ImagePanel: React.FC<ImagePanelProps> = ({}) => {
+const ImagePanel: React.FC<ImagePanelProps> = ({ images, setImages }) => {
   return (
     <div
       style={{
