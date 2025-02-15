@@ -14,13 +14,14 @@ export interface CustomImageData {
 }
 
 function App() {
+  //initial number details
   const [numberDetails, setNumberDetails] = useState({
-    selectedNumber: 20, // Initial number
-    selectedFont: "GasoekOne.ttf", // Initial font
-    selectedSize: 550, // Initial font Size
-    offsetX: 0, // Initial offset x-axis
-    offsetY: 0, // Initial offset y-axis
-    rotation: 0, // Initial rotation
+    selectedNumber: 20,
+    selectedFont: "GasoekOne.ttf",
+    selectedSize: 550,
+    offsetX: 0,
+    offsetY: 0,
+    rotation: 0,
   });
 
   const canvasSize = 800;

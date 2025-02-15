@@ -46,16 +46,16 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   const move = (direction: "left" | "right" | "up" | "down") => {
     switch (direction) {
       case "left":
-        updateNumberDetails("offsetX", offsetX + 1);
+        updateNumberDetails("offsetX", offsetX + 10);
         break;
       case "right":
-        updateNumberDetails("offsetX", offsetX - 1);
+        updateNumberDetails("offsetX", offsetX - 10);
         break;
       case "up":
-        updateNumberDetails("offsetY", offsetY + 1);
+        updateNumberDetails("offsetY", offsetY + 10);
         break;
       case "down":
-        updateNumberDetails("offsetY", offsetY - 1);
+        updateNumberDetails("offsetY", offsetY - 10);
         break;
       default:
         break;
@@ -141,6 +141,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       >
         <option value="GasoekOne.ttf">Gasoek One</option>
         <option value="arial_black.ttf">Arial Black</option>
+        <option value="Coiny-Regular.ttf">Coiny</option>
         {/* Add more fonts here */}
       </select>
 
