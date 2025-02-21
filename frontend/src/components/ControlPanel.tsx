@@ -21,7 +21,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
 }) => {
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Allow only numeric values
     if (/^\d*$/.test(value)) {
       updateNumberDetails(
         "selectedNumber",
@@ -32,7 +31,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
 
   const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    // Allow only numeric values
     if (/^\d*$/.test(value)) {
       updateNumberDetails("selectedSize", value === "" ? "" : parseInt(value));
     }
@@ -142,7 +140,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="GasoekOne.ttf">Gasoek One</option>
         <option value="arial_black.ttf">Arial Black</option>
         <option value="Coiny-Regular.ttf">Coiny</option>
-        {/* Add more fonts here */}
+        {/* Add more fonts*/}
       </select>
 
       <button onClick={() => move("left")}>Move Left</button>

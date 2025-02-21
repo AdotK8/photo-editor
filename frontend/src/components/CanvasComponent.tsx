@@ -43,7 +43,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const [fontLoaded, setFontLoaded] = useState(false);
   const outlineLayerRef = useRef<Konva.Layer>(null);
 
-  // Refs for each image and its corresponding transformer, keyed by image id.
+  // initialising refs for each image, and tranformers for each image, keyed by image id.
   const imageRefs = useRef<{ [key: number]: Konva.Image | null }>({});
   const transformerRefs = useRef<{ [key: number]: Konva.Transformer | null }>(
     {}
@@ -82,7 +82,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     });
   }, [selectedNumber, selectedFont, selectedSize, offsetX, offsetY]);
 
-  // After mount (or images change), attach transformers for each image.
+  // Attach transformers to images
   useEffect(() => {
     images.forEach((img: any) => {
       if (imageRefs.current[img.id] && transformerRefs.current[img.id]) {
