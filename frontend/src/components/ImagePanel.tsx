@@ -128,7 +128,7 @@ const ImagePanel: React.FC<ImagePanelProps> = ({ images, setImages }) => {
       </div>
 
       {/* Drag & Drop Area */}
-      <p style={{ marginTop: "10px" }}>Drag & Drop Images Here</p>
+      <p style={{ marginTop: "10px", flexGrow: 1 }}>Drag & Drop Images Here</p>
     </div>
   );
 };

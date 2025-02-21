@@ -48,6 +48,50 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const transformerRefs = useRef<{ [key: number]: Konva.Transformer | null }>(
     {}
   );
+  const imagesRef = useRef(images);
+  useEffect(() => {
+    imagesRef.current = images;
+  }, [images]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const selectedImage = imagesRef.current.find((img) => img.selected);
+      if (!selectedImage) return;
+
+      const step = 1;
+      let dx = 0;
+      let dy = 0;
+
+      switch (e.key) {
+        case "ArrowUp":
+          dy = -step;
+          break;
+        case "ArrowDown":
+          dy = step;
+          break;
+        case "ArrowLeft":
+          dx = -step;
+          break;
+        case "ArrowRight":
+          dx = step;
+          break;
+        default:
+          return;
+      }
+
+      e.preventDefault(); // Prevent default scrolling
+      setImages((prevImages) =>
+        prevImages.map((img) =>
+          img.id === selectedImage.id
+            ? { ...img, x: img.x + dx, y: img.y + dy }
+            : img
+        )
+      );
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [setImages]);
 
   // Load font and generate the mask path.
   useEffect(() => {
