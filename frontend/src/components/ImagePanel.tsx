@@ -33,6 +33,7 @@ const ImagePanel: React.FC<ImagePanelProps> = ({ images, setImages }) => {
               width: 200,
               height: 100,
               selected: false,
+              flipped: false, // Added flipped state
             },
           ]);
         };
@@ -48,6 +49,14 @@ const ImagePanel: React.FC<ImagePanelProps> = ({ images, setImages }) => {
 
   const handleDeleteImage = (id: number) => {
     setImages((prevImages) => prevImages.filter((img) => img.id !== id));
+  };
+
+  const handleFlip = (id: number) => {
+    setImages((prevImages) =>
+      prevImages.map((img) =>
+        img.id === id ? { ...img, flipped: !img.flipped } : img
+      )
+    );
   };
 
   return (
@@ -91,37 +100,60 @@ const ImagePanel: React.FC<ImagePanelProps> = ({ images, setImages }) => {
             <img
               src={img.image.src}
               alt={`Uploaded ${img.id}`}
-              onClick={() => handleSelectImage(img.id)} // Toggle selection
+              onClick={() => handleSelectImage(img.id)}
               style={{
                 width: "50px",
                 height: "50px",
                 objectFit: "cover",
                 borderRadius: "5px",
-                border: img.selected ? "3px solid blue" : "1px solid #ccc", // Highlight when selected
+                border: img.selected ? "3px solid blue" : "1px solid #ccc",
                 cursor: "pointer",
+                transform: img.flipped ? "scaleX(-1)" : "scaleX(1)", // Flip effect
               }}
             />
             {img.selected && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation(); // Prevent triggering select on click
-                  handleDeleteImage(img.id); // Delete the image
-                }}
-                style={{
-                  position: "absolute",
-                  top: "5px",
-                  right: "5px",
-                  background: "rgba(255, 255, 255, 0.7)",
-                  border: "none",
-                  borderRadius: "50%",
-                  padding: "5px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  color: "red",
-                }}
-              >
-                X
-              </button>
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteImage(img.id);
+                  }}
+                  style={{
+                    position: "absolute",
+                    top: "5px",
+                    right: "5px",
+                    background: "rgba(255, 255, 255, 0.7)",
+                    border: "none",
+                    borderRadius: "50%",
+                    padding: "5px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    color: "red",
+                  }}
+                >
+                  X
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFlip(img.id);
+                  }}
+                  style={{
+                    position: "absolute",
+                    bottom: "5px",
+                    right: "5px",
+                    background: "rgba(255, 255, 255, 0.7)",
+                    border: "none",
+                    borderRadius: "50%",
+                    padding: "5px",
+                    cursor: "pointer",
+                    fontSize: "14px",
+                    color: "blue",
+                  }}
+                >
+                  ↔
+                </button>
+              </>
             )}
           </div>
         ))}

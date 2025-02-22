@@ -48,6 +48,8 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const transformerRefs = useRef<{ [key: number]: Konva.Transformer | null }>(
     {}
   );
+
+  //initialising images refs
   const imagesRef = useRef(images);
   useEffect(() => {
     imagesRef.current = images;
@@ -141,18 +143,27 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     if (node) {
       const newX = node.x();
       const newY = node.y();
-      const newWidth = node.width() * node.scaleX();
-      const newHeight = node.height() * node.scaleY();
+      const newWidth = node.width();
+      const newHeight = node.height();
+      const newScaleX = node.scaleX();
+      const newScaleY = node.scaleY();
+
       setImages((prev: any) =>
         prev.map((img: any) =>
           img.id === id
-            ? { ...img, x: newX, y: newY, width: newWidth, height: newHeight }
+            ? {
+                ...img,
+                x: newX,
+                y: newY,
+                width: newWidth,
+                height: newHeight,
+              }
             : img
         )
       );
-      // Reset the scaling factors.
-      node.scaleX(1);
-      node.scaleY(1);
+
+      node.scaleX(newScaleX);
+      node.scaleY(newScaleY);
     }
   };
 
@@ -172,6 +183,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
 
   return (
     <div
+      tabIndex={0}
       style={{
         width: `${canvasSize}px`,
         height: `${canvasSize}px`,
@@ -226,6 +238,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 onTap={() => handleSelect(img.id)}
                 onDragEnd={() => handleTransformEnd(img.id)}
                 onTransformEnd={() => handleTransformEnd(img.id)}
+                scaleX={img.flipped ? -1 : 1}
               />
               {/* Conditionally render the transformer only if this image is selected */}
               {img.selected && (

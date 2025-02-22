@@ -11,6 +11,8 @@ export interface CustomImageData {
   width: number;
   height: number;
   selected: boolean;
+  flipped?: boolean;
+  scaleX?: number;
 }
 
 function App() {
@@ -42,24 +44,7 @@ function App() {
         width: 200,
         height: 100,
         selected: false,
-      },
-      {
-        id: 2,
-        image: img2,
-        x: canvasSize / 2 - 150,
-        y: canvasSize / 2 - 75,
-        width: 200,
-        height: 100,
-        selected: false,
-      },
-      {
-        id: 3,
-        image: img3,
-        x: canvasSize / 2 - 150,
-        y: canvasSize / 2 - 50,
-        width: 200,
-        height: 100,
-        selected: false,
+        scaleX: 1,
       },
     ];
   });
