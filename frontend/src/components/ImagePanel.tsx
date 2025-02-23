@@ -4,9 +4,14 @@ import { CustomImageData } from "../App";
 interface ImagePanelProps {
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
+  canvasSize: number;
 }
 
-const ImagePanel: React.FC<ImagePanelProps> = ({ images, setImages }) => {
+const ImagePanel: React.FC<ImagePanelProps> = ({
+  images,
+  setImages,
+  canvasSize,
+}) => {
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const files = event.dataTransfer.files;
@@ -28,8 +33,8 @@ const ImagePanel: React.FC<ImagePanelProps> = ({ images, setImages }) => {
             {
               id: prevImages.length + 1,
               image: img,
-              x: 100,
-              y: 100,
+              x: canvasSize / 2 - 100,
+              y: canvasSize / 2 - 50,
               width: 200,
               height: 100,
               selected: false,

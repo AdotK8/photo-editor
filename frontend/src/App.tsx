@@ -90,7 +90,11 @@ function App() {
       </div>
 
       {/* Image Panel */}
-      <ImagePanel images={images} setImages={setImages} />
+      <ImagePanel
+        images={images}
+        setImages={setImages}
+        canvasSize={canvasSize}
+      />
     </div>
   );
 }
