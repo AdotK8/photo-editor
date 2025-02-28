@@ -143,7 +143,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     if (node) {
       const newX = node.x();
       const newY = node.y();
-      const newWidth = node.width();
+      const newWidth = node.width(); // Preserve resized width
       const newHeight = node.height();
       const newScaleX = node.scaleX();
       const newScaleY = node.scaleY();
@@ -157,6 +157,8 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 y: newY,
                 width: newWidth,
                 height: newHeight,
+                scaleX: node.scaleX(),
+                flipped: img.flipped,
               }
             : img
         )

@@ -38,7 +38,8 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
               width: 200,
               height: 100,
               selected: false,
-              flipped: false, // Added flipped state
+              flipped: false,
+              scaleX: 1,
             },
           ]);
         };
@@ -53,14 +54,26 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
   };
 
   const handleDeleteImage = (id: number) => {
-    setImages((prevImages) => prevImages.filter((img) => img.id !== id));
+    // setImages((prevImages) => prevImages.filter((img) => img.id !== id));
+    const imageToLog = images.find((img) => img.id === id);
+    console.log("ScaleX:", imageToLog?.scaleX);
+    console.log("Width:", imageToLog?.width);
   };
 
   const handleFlip = (id: number) => {
     setImages((prevImages) =>
-      prevImages.map((img) =>
-        img.id === id ? { ...img, flipped: !img.flipped } : img
-      )
+      prevImages.map((img) => {
+        if (img.id === id) {
+          const newWidth = img.width * img.scaleX; //adjusting image width to update with scale
+          return {
+            ...img,
+            flipped: !img.flipped,
+            width: newWidth, // Update width after flipping
+            scaleX: 1, //resetting scaleX
+          };
+        }
+        return img;
+      })
     );
   };
 

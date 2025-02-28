@@ -12,7 +12,7 @@ export interface CustomImageData {
   height: number;
   selected: boolean;
   flipped?: boolean;
-  scaleX?: number;
+  scaleX: number;
 }
 
 function App() {
