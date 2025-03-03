@@ -138,32 +138,61 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     });
   }, [images]);
 
+  const handleFlip = () => {
+    setImages((prevImages) =>
+      prevImages.map((img) => {
+        if (!img.selected) return img; // Skip unselected images
+
+        const node = imageRefs.current[img.id];
+        if (!node) return img; // Ensure node exists
+
+        const currentScaleX = img.scaleX ?? 1; // Default to 1 if undefined
+        const newScaleX = -currentScaleX;
+        const flippedStatus = !img.flipped;
+
+        // Get the unscaled width of the image
+        const baseWidth = node.getClientRect().width;
+        const shift = baseWidth / 2; // Shift by half the width
+
+        // Adjust X position to prevent flicker
+        const newX = flippedStatus ? node.x() + shift : node.x() - shift;
+
+        // Apply changes directly to the Konva node before React updates state
+        node.scaleX(newScaleX);
+        node.x(newX);
+        node.getLayer()?.batchDraw(); // Force redraw
+
+        return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
+      })
+    );
+  };
+
   const handleTransformEnd = (id: number) => {
     const node = imageRefs.current[id];
     if (node) {
+      console.log(node.x());
       const newX = node.x();
       const newY = node.y();
-      const newWidth = node.width(); // Preserve resized width
+      const newWidth = node.width();
       const newHeight = node.height();
       const newScaleX = node.scaleX();
       const newScaleY = node.scaleY();
-
-      setImages((prev: any) =>
-        prev.map((img: any) =>
-          img.id === id
-            ? {
-                ...img,
-                x: newX,
-                y: newY,
-                width: newWidth,
-                height: newHeight,
-                scaleX: node.scaleX(),
-                flipped: img.flipped,
-              }
-            : img
-        )
-      );
-
+      setImages((prev: any) => {
+        return prev.map((img: any) => {
+          if (img.id === id) {
+            return {
+              ...img,
+              x: newX,
+              y: newY,
+              width: newWidth,
+              height: newHeight,
+              scaleX: node.scaleX(),
+            };
+          } else {
+            return img;
+          }
+        });
+      });
       node.scaleX(newScaleX);
       node.scaleY(newScaleY);
     }
@@ -195,6 +224,13 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         alignItems: "center",
       }}
     >
+      <button
+        style={{ position: "absolute", top: 10, left: 10, zIndex: 10 }}
+        onClick={handleFlip}
+      >
+        Flip
+      </button>
+
       <Stage
         width={canvasSize}
         height={canvasSize}
@@ -240,7 +276,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 onTap={() => handleSelect(img.id)}
                 onDragEnd={() => handleTransformEnd(img.id)}
                 onTransformEnd={() => handleTransformEnd(img.id)}
-                scaleX={img.flipped ? -1 : 1}
+                scaleX={img.scaleX}
               />
               {/* Conditionally render the transformer only if this image is selected */}
               {img.selected && (

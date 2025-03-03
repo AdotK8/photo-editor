@@ -11,7 +11,7 @@ export interface CustomImageData {
   width: number;
   height: number;
   selected: boolean;
-  flipped?: boolean;
+  flipped: boolean;
   scaleX: number;
 }
 
@@ -45,6 +45,7 @@ function App() {
         height: 100,
         selected: false,
         scaleX: 1,
+        flipped: false,
       },
     ];
   });
