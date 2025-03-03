@@ -197,6 +197,22 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     }
   };
 
+  const handleCenter = () => {
+    setImages((prevImages) =>
+      prevImages.map((img) => {
+        if (!img.selected) return img;
+
+        const node = imageRefs.current[img.id];
+        if (!node) return img;
+
+        const newX = canvasSize / 2 - 200 / 2;
+        const newY = canvasSize / 2 - img.height / 2;
+
+        return { ...img, x: newX, y: newY };
+      })
+    );
+  };
+
   // When an image is clicked, mark it as selected and unselect others.
   const handleSelect = (id: number) => {
     setImages((prev: any) =>
@@ -228,6 +244,13 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         onClick={handleFlip}
       >
         Flip
+      </button>
+
+      <button
+        style={{ position: "absolute", top: 10, left: 50, zIndex: 10 }}
+        onClick={handleCenter}
+      >
+        Center Image
       </button>
 
       <Stage
