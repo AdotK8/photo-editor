@@ -176,6 +176,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
       const newHeight = node.height();
       const newScaleX = node.scaleX();
       const newScaleY = node.scaleY();
+      console.log("rotation " + node.rotation());
       setImages((prev: any) => {
         return prev.map((img: any) => {
           if (img.id === id) {
@@ -205,9 +206,13 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         const node = imageRefs.current[img.id];
         if (!node) return img;
 
+        //resetting rotation of image
+        node.rotation(0);
+
         const newX = canvasSize / 2 - 200 / 2;
         const newY = canvasSize / 2 - img.height / 2;
 
+        //setting image to original coordinates
         return { ...img, x: newX, y: newY };
       })
     );
