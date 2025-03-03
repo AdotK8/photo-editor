@@ -141,18 +141,17 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const handleFlip = () => {
     setImages((prevImages) =>
       prevImages.map((img) => {
-        if (!img.selected) return img; // Skip unselected images
+        if (!img.selected) return img;
 
         const node = imageRefs.current[img.id];
-        if (!node) return img; // Ensure node exists
+        if (!node) return img;
 
-        const currentScaleX = img.scaleX ?? 1; // Default to 1 if undefined
+        const currentScaleX = img.scaleX ?? 1;
         const newScaleX = -currentScaleX;
         const flippedStatus = !img.flipped;
 
-        // Get the unscaled width of the image
         const baseWidth = node.getClientRect().width;
-        const shift = baseWidth / 2; // Shift by half the width
+        const shift = baseWidth / 2;
 
         // Adjust X position to prevent flicker
         const newX = flippedStatus ? node.x() + shift : node.x() - shift;

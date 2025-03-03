@@ -28,15 +28,20 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
         const img = new Image();
         img.src = reader.result as string;
         img.onload = () => {
+          // Calculate height maintaining aspect ratio
+          const aspectRatio = img.naturalHeight / img.naturalWidth;
+          const fixedWidth = 200;
+          const calculatedHeight = fixedWidth * aspectRatio;
+
           setImages((prevImages) => [
             ...prevImages,
             {
               id: prevImages.length + 1,
               image: img,
-              x: canvasSize / 2 - 100,
-              y: canvasSize / 2 - 50,
-              width: 200,
-              height: 100,
+              x: canvasSize / 2 - fixedWidth / 2, // Center the image
+              y: canvasSize / 2 - calculatedHeight / 2, // Center the image
+              width: fixedWidth,
+              height: calculatedHeight,
               selected: false,
               flipped: false,
               scaleX: 1,
@@ -54,18 +59,11 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
   };
 
   const handleDeleteImage = (id: number) => {
-    // setImages((prevImages) => prevImages.filter((img) => img.id !== id));
-
     const imageToLog = images.find((img) => img.id === id);
-    // console.log("ScaleX:", imageToLog?.scaleX);
-    // console.log("Width:", imageToLog?.width);
-    // console.log("X:", imageToLog?.x);
-    // console.log("Y:", imageToLog?.y);
-    // console.log("flipped:", imageToLog?.flipped);
-    // console.log("rot:", imageToLog?.rotation);
     console.log(imageToLog);
   };
 
+  // Rest of your component remains the same
   return (
     <div
       onDragOver={(event) => event.preventDefault()}
@@ -83,10 +81,7 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
         border: "2px dashed #bbb",
       }}
     >
-      {/* Header Section */}
       <h3 style={{ marginBottom: "10px" }}>Images</h3>
-
-      {/* Thumbnail Section */}
       <div
         style={{
           width: "100%",
@@ -115,58 +110,34 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
                 borderRadius: "5px",
                 border: img.selected ? "3px solid blue" : "1px solid #ccc",
                 cursor: "pointer",
-                transform: img.flipped ? "scaleX(-1)" : "scaleX(1)", // Flip effect
+                transform: img.flipped ? "scaleX(-1)" : "scaleX(1)",
               }}
             />
             {img.selected && (
-              <>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteImage(img.id);
-                  }}
-                  style={{
-                    position: "absolute",
-                    top: "5px",
-                    right: "5px",
-                    background: "rgba(255, 255, 255, 0.7)",
-                    border: "none",
-                    borderRadius: "50%",
-                    padding: "5px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    color: "red",
-                  }}
-                >
-                  X
-                </button>
-                {/* <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleFlip(img.id);
-                  }}
-                  style={{
-                    position: "absolute",
-                    bottom: "5px",
-                    right: "5px",
-                    background: "rgba(255, 255, 255, 0.7)",
-                    border: "none",
-                    borderRadius: "50%",
-                    padding: "5px",
-                    cursor: "pointer",
-                    fontSize: "14px",
-                    color: "blue",
-                  }}
-                >
-                  ↔
-                </button> */}
-              </>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteImage(img.id);
+                }}
+                style={{
+                  position: "absolute",
+                  top: "5px",
+                  right: "5px",
+                  background: "rgba(255, 255, 255, 0.7)",
+                  border: "none",
+                  borderRadius: "50%",
+                  padding: "5px",
+                  cursor: "pointer",
+                  fontSize: "14px",
+                  color: "red",
+                }}
+              >
+                X
+              </button>
             )}
           </div>
         ))}
       </div>
-
-      {/* Drag & Drop Area */}
       <p style={{ marginTop: "10px", flexGrow: 1 }}>Drag & Drop Images Here</p>
     </div>
   );
