@@ -47,6 +47,17 @@ function App() {
         scaleX: 1,
         flipped: false,
       },
+      {
+        id: 2,
+        image: img2,
+        x: canvasSize / 2 - 200,
+        y: canvasSize / 2 - 150,
+        width: 200,
+        height: 100,
+        selected: false,
+        scaleX: 1,
+        flipped: false,
+      },
     ];
   });
 

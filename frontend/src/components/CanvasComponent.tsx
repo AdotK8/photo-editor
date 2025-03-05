@@ -278,7 +278,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         {fontLoaded &&
           textPath &&
           pathBBox &&
-          images.map((img: any) => (
+          images.map((img: CustomImageData) => (
             <Layer key={img.id}>
               {/* Mask Path */}
               <Path

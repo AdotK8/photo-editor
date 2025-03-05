@@ -53,17 +53,15 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
   };
 
   const handleSelectImage = (id: number) => {
-    setImages((prev: any) =>
-      prev.map((img: any) => ({ ...img, selected: img.id === id }))
+    setImages((prev: CustomImageData[]) =>
+      prev.map((img) => ({ ...img, selected: img.id === id }))
     );
   };
 
   const handleDeleteImage = (id: number) => {
-    const imageToLog = images.find((img) => img.id === id);
-    console.log(imageToLog);
+    setImages((prevImages) => prevImages.filter((img) => img.id !== id));
   };
 
-  // Rest of your component remains the same
   return (
     <div
       onDragOver={(event) => event.preventDefault()}
