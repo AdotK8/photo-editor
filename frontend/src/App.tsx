@@ -27,6 +27,14 @@ function App() {
     rotation: 0,
   });
 
+  const [textDetails, setTextDetails] = useState({
+    phrase: "Happy Birthday",
+    selectedFont: "GasoekOne.ttf",
+    selectedSize: 50,
+    textOffsetX: 0,
+    textOffsetY: 0,
+  });
+
   const canvasSize = 800;
 
   const [images, setImages] = useState<CustomImageData[]>(() => {
@@ -70,6 +78,13 @@ function App() {
     }));
   };
 
+  const updateTextDetails = (key: string, value: string | number) => {
+    setTextDetails((prevDetails) => ({
+      ...prevDetails,
+      [key]: value,
+    }));
+  };
+
   return (
     <div
       style={{
@@ -86,7 +101,13 @@ function App() {
         offsetX={numberDetails.offsetX}
         offsetY={numberDetails.offsetY}
         rotation={numberDetails.rotation}
+        phrase={textDetails.phrase}
+        selectedTextSize={textDetails.selectedSize}
+        selectedTextFont={textDetails.selectedFont}
+        textOffsetX={textDetails.textOffsetX}
+        textOffsetY={textDetails.textOffsetY}
         updateNumberDetails={updateNumberDetails}
+        updateTextDetails={updateTextDetails}
       />
 
       {/* Canvas */}
@@ -99,6 +120,11 @@ function App() {
           offsetX={numberDetails.offsetX}
           offsetY={numberDetails.offsetY}
           rotation={numberDetails.rotation}
+          phrase={textDetails.phrase}
+          selectedTextSize={textDetails.selectedSize}
+          selectedTextFont={textDetails.selectedFont}
+          textOffsetX={textDetails.textOffsetX}
+          textOffsetY={textDetails.textOffsetY}
           images={images}
           setImages={setImages}
         />

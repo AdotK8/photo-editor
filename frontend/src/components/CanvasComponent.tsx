@@ -6,6 +6,7 @@ import {
   Path,
   Image as KonvaImage,
   Transformer,
+  Text,
 } from "react-konva";
 import * as opentype from "opentype.js";
 import Konva from "konva";
@@ -24,6 +25,11 @@ interface CanvasComponentProps {
   offsetX: number;
   offsetY: number;
   rotation: number;
+  phrase: string;
+  selectedTextSize: number;
+  selectedTextFont: string;
+  textOffsetX: number;
+  textOffsetY: number;
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
 }
@@ -37,6 +43,11 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   offsetY,
   rotation,
   images,
+  phrase,
+  selectedTextFont,
+  selectedTextSize,
+  textOffsetX,
+  textOffsetY,
   setImages,
 }) => {
   const canvasSize = 800;
@@ -44,6 +55,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const [pathBBox, setPathBBox] = useState<BBox | null>(null);
   const [fontLoaded, setFontLoaded] = useState(false);
   const outlineLayerRef = useRef<Konva.Layer>(null);
+  const textRef = useRef<Konva.Text | null>(null);
 
   // initialising refs for each image, and tranformers for each image, keyed by image id.
   const imageRefs = useRef<{ [key: number]: Konva.Image | null }>({});
@@ -332,6 +344,21 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
               )}
             </Layer>
           ))}
+
+        {/* Text Layer */}
+        <Layer>
+          <Text
+            ref={textRef} // Attach the text reference
+            text={phrase}
+            fontSize={selectedTextSize}
+            fontFamily={selectedTextFont.replace(".ttf", "")}
+            width={canvasSize}
+            align="center"
+            fill="black"
+            x={textOffsetX}
+            y={textOffsetY}
+          />
+        </Layer>
 
         {/* Outline (stroke) Path */}
         <Layer ref={outlineLayerRef}>

@@ -8,6 +8,12 @@ interface ControlPanelProps {
   offsetX: number;
   offsetY: number;
   rotation: number;
+  phrase: string;
+  selectedTextSize: number;
+  selectedTextFont: string;
+  textOffsetX: number;
+  textOffsetY: number;
+  updateTextDetails: (key: string, value: string | number) => void;
   updateNumberDetails: (key: string, value: string | number) => void;
 }
 
@@ -19,6 +25,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   offsetX,
   offsetY,
   rotation,
+  phrase,
+  selectedTextSize,
+  selectedTextFont,
+  textOffsetX,
+  textOffsetY,
+  updateTextDetails,
   updateNumberDetails,
 }) => {
   const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,6 +55,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateNumberDetails("selectedFont", value);
   };
 
+  // New handler for phrase input
+  const handlePhraseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    updateTextDetails("phrase", value);
+  };
+
   const move = (direction: "left" | "right" | "up" | "down") => {
     switch (direction) {
       case "left":
@@ -56,6 +74,25 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         break;
       case "down":
         updateNumberDetails("offsetY", offsetY - 10);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const moveText = (direction: "left" | "right" | "up" | "down") => {
+    switch (direction) {
+      case "left":
+        updateTextDetails("textOffsetX", textOffsetX - 10);
+        break;
+      case "right":
+        updateTextDetails("textOffsetX", textOffsetX + 10);
+        break;
+      case "up":
+        updateTextDetails("textOffsetY", textOffsetY - 10);
+        break;
+      case "down":
+        updateTextDetails("textOffsetY", textOffsetY + 10);
         break;
       default:
         break;
@@ -142,8 +179,26 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="GasoekOne.ttf">Gasoek One</option>
         <option value="arial_black.ttf">Arial Black</option>
         <option value="Coiny-Regular.ttf">Coiny</option>
-        {/* Add more fonts*/}
+        {/* Add more fonts */}
       </select>
+
+      {/* New Phrase input */}
+      <label htmlFor="phrase-input" style={{ marginTop: "20px" }}>
+        Enter text phrase:
+      </label>
+      <input
+        id="phrase-input"
+        type="text"
+        value={phrase}
+        onChange={handlePhraseChange}
+        style={{
+          padding: "10px",
+          fontSize: "16px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          marginBottom: "20px",
+        }}
+      />
 
       <button onClick={() => move("left")}>Move Left</button>
       <button onClick={() => move("right")}>Move Right</button>
@@ -169,6 +224,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           marginBottom: "10px",
         }}
       />
+
+      <button onClick={() => moveText("left")}>Move Left</button>
+      <button onClick={() => moveText("right")}>Move Right</button>
+      <button onClick={() => moveText("up")}>Move Up</button>
+      <button onClick={() => moveText("down")}>Move Down</button>
     </div>
   );
 };
