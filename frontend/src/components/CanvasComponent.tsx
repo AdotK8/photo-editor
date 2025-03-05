@@ -200,7 +200,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     }
   };
 
-  const handleCenter = () => {
+  const handleReset = () => {
     setImages((prevImages) =>
       prevImages.map((img) => {
         if (!img.selected) return img;
@@ -208,14 +208,25 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         const node = imageRefs.current[img.id];
         if (!node) return img;
 
-        //resetting rotation of image
         node.rotation(0);
+        const originalWidth = 200;
+        const originalHeight = img.height;
+        const newX = canvasSize / 2 - originalWidth / 2;
+        const newY = canvasSize / 2 - originalHeight / 2;
 
-        const newX = canvasSize / 2 - 200 / 2;
-        const newY = canvasSize / 2 - img.height / 2;
+        // Reset scale and dimensions
+        node.scaleX(1);
+        node.scaleY(1);
 
-        //setting image to original coordinates
-        return { ...img, x: newX, y: newY };
+        return {
+          ...img,
+          x: newX,
+          y: newY,
+          width: originalWidth,
+          height: originalHeight,
+          scaleX: 1,
+          flipped: false,
+        };
       })
     );
   };
@@ -255,9 +266,9 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
 
       <button
         style={{ position: "absolute", top: 10, left: 50, zIndex: 10 }}
-        onClick={handleCenter}
+        onClick={handleReset}
       >
-        Center Image
+        Reset Image
       </button>
 
       <Stage

@@ -53,8 +53,8 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
   };
 
   const handleSelectImage = (id: number) => {
-    setImages((prev: CustomImageData[]) =>
-      prev.map((img) => ({ ...img, selected: img.id === id }))
+    setImages((prev: any) =>
+      prev.map((img: any) => ({ ...img, selected: img.id === id }))
     );
   };
 
