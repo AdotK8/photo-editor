@@ -21,6 +21,7 @@ function App() {
     selectedNumber: 20,
     selectedFont: "GasoekOne.ttf",
     selectedSize: 550,
+    strokeWidth: 2,
     offsetX: 0,
     offsetY: 0,
     rotation: 0,
@@ -81,6 +82,7 @@ function App() {
         selectedNumber={numberDetails.selectedNumber}
         selectedFont={numberDetails.selectedFont}
         selectedSize={numberDetails.selectedSize}
+        strokeWidth={numberDetails.strokeWidth}
         offsetX={numberDetails.offsetX}
         offsetY={numberDetails.offsetY}
         rotation={numberDetails.rotation}
@@ -93,6 +95,7 @@ function App() {
           selectedNumber={numberDetails.selectedNumber}
           selectedFont={numberDetails.selectedFont}
           selectedSize={numberDetails.selectedSize}
+          strokeWidth={numberDetails.strokeWidth}
           offsetX={numberDetails.offsetX}
           offsetY={numberDetails.offsetY}
           rotation={numberDetails.rotation}

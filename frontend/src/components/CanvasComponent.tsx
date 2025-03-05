@@ -20,6 +20,7 @@ interface CanvasComponentProps {
   selectedNumber: number;
   selectedFont: string;
   selectedSize: number;
+  strokeWidth: number;
   offsetX: number;
   offsetY: number;
   rotation: number;
@@ -31,6 +32,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   selectedNumber,
   selectedFont,
   selectedSize,
+  strokeWidth,
   offsetX,
   offsetY,
   rotation,
@@ -328,7 +330,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
               x={canvasSize / 2 - pathBBox.cx}
               y={canvasSize / 2 - pathBBox.cy}
               stroke="black"
-              strokeWidth={2}
+              strokeWidth={strokeWidth}
               listening={false}
               rotation={rotation}
               globalCompositeOperation="source-over"

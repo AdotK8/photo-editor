@@ -4,6 +4,7 @@ interface ControlPanelProps {
   selectedNumber: string | number;
   selectedFont: string;
   selectedSize: string | number;
+  strokeWidth: number;
   offsetX: number;
   offsetY: number;
   rotation: number;
@@ -14,6 +15,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   selectedNumber,
   selectedFont,
   selectedSize,
+  strokeWidth,
   offsetX,
   offsetY,
   rotation,
@@ -150,6 +152,23 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       <button onClick={() => rotate("left")}>Rotate Left</button>
       <button onClick={() => rotate("right")}>Rotate Right</button>
       <button onClick={reset}>Reset</button>
+      <label htmlFor="stroke-width" style={{ marginTop: "20px" }}>
+        Stroke Width:
+      </label>
+      <input
+        id="stroke-width"
+        type="range"
+        min="1"
+        max="10"
+        value={strokeWidth}
+        onChange={(e) =>
+          updateNumberDetails("strokeWidth", parseInt(e.target.value))
+        }
+        style={{
+          width: "100%",
+          marginBottom: "10px",
+        }}
+      />
     </div>
   );
 };
