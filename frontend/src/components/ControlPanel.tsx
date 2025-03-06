@@ -13,7 +13,8 @@ interface ControlPanelProps {
   selectedTextFont: string;
   textOffsetX: number;
   textOffsetY: number;
-  fonts: object;
+  textRotation: number;
+
   updateTextDetails: (key: string, value: string | number) => void;
   updateNumberDetails: (key: string, value: string | number) => void;
 }
@@ -29,7 +30,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   phrase,
   selectedTextSize,
   selectedTextFont,
-  fonts,
+  textRotation,
   textOffsetX,
   textOffsetY,
   updateTextDetails,
@@ -118,6 +119,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateNumberDetails("rotation", value);
   };
 
+  const rotateText = (direction: "left" | "right") => {
+    const value = direction === "left" ? textRotation + 1 : textRotation - 1;
+    updateTextDetails("textRotation", value);
+  };
+
   const reset = () => {
     updateNumberDetails("offsetX", 0);
     updateNumberDetails("offsetY", 0);
@@ -125,6 +131,13 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateNumberDetails("selectedNumber", 20);
     updateNumberDetails("selectedSize", 550);
     updateNumberDetails("selectedFont", "GasoekOne.ttf");
+  };
+
+  const resetText = () => {
+    updateTextDetails("textOffsetX", 0);
+    updateTextDetails("textOffsetY", 50);
+    updateTextDetails("textRotation", 0);
+    updateTextDetails("phrase", "Happy Birthday");
   };
 
   return (
@@ -243,6 +256,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       <button onClick={() => moveText("right")}>Move Right</button>
       <button onClick={() => moveText("up")}>Move Up</button>
       <button onClick={() => moveText("down")}>Move Down</button>
+      <button onClick={() => rotateText("left")}>Rotate Left</button>
+      <button onClick={() => rotateText("right")}>Rotate Right</button>
+      <button onClick={resetText}>Reset</button>
 
       <select
         id="font-selector"

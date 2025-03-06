@@ -31,6 +31,7 @@ interface CanvasComponentProps {
   selectedTextFont: string;
   textOffsetX: number;
   textOffsetY: number;
+  textRotation: number;
   fonts: object;
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
@@ -50,6 +51,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   selectedTextSize,
   textOffsetX,
   textOffsetY,
+  textRotation,
   fonts,
   setImages,
 }) => {
@@ -156,29 +158,28 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   }, [images]);
 
   const handleFlip = () => {
-    console.log(selectedTextFont);
-    // setImages((prevImages) =>
-    //   prevImages.map((img) => {
-    //     if (!img.selected) return img;
+    setImages((prevImages) =>
+      prevImages.map((img) => {
+        if (!img.selected) return img;
 
-    //     const node = imageRefs.current[img.id];
-    //     if (!node) return img;
+        const node = imageRefs.current[img.id];
+        if (!node) return img;
 
-    //     const currentScaleX = img.scaleX ?? 1;
-    //     const newScaleX = -currentScaleX;
-    //     const flippedStatus = !img.flipped;
+        const currentScaleX = img.scaleX ?? 1;
+        const newScaleX = -currentScaleX;
+        const flippedStatus = !img.flipped;
 
-    //     const baseWidth = node.getClientRect().width;
-    //     const shift = baseWidth / 2;
-    //     const newX = flippedStatus ? node.x() + shift : node.x() - shift;
+        const baseWidth = node.getClientRect().width;
+        const shift = baseWidth / 2;
+        const newX = flippedStatus ? node.x() + shift : node.x() - shift;
 
-    //     node.scaleX(newScaleX);
-    //     node.x(newX);
-    //     node.getLayer()?.batchDraw(); // Force redraw
+        node.scaleX(newScaleX);
+        node.x(newX);
+        node.getLayer()?.batchDraw();
 
-    //     return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
-    //   })
-    // );
+        return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
+      })
+    );
   };
 
   const handleTransformEnd = (id: number) => {
@@ -362,6 +363,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
             x={textOffsetX}
             y={textOffsetY}
             className="phrase"
+            rotation={textRotation}
           />
         </Layer>
 

@@ -33,6 +33,7 @@ function App() {
     selectedSize: 60,
     textOffsetX: 0,
     textOffsetY: 50,
+    textRotation: 0,
   });
 
   const canvasSize = 800;
@@ -108,7 +109,7 @@ function App() {
         selectedTextFont={textDetails.selectedFont}
         textOffsetX={textDetails.textOffsetX}
         textOffsetY={textDetails.textOffsetY}
-        fonts={fonts}
+        textRotation={textDetails.textRotation}
         updateNumberDetails={updateNumberDetails}
         updateTextDetails={updateTextDetails}
       />
@@ -129,6 +130,7 @@ function App() {
           selectedTextFont={textDetails.selectedFont}
           textOffsetX={textDetails.textOffsetX}
           textOffsetY={textDetails.textOffsetY}
+          textRotation={textDetails.textRotation}
           images={images}
           setImages={setImages}
         />
