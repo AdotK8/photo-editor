@@ -13,6 +13,7 @@ interface ControlPanelProps {
   selectedTextFont: string;
   textOffsetX: number;
   textOffsetY: number;
+  fonts: object;
   updateTextDetails: (key: string, value: string | number) => void;
   updateNumberDetails: (key: string, value: string | number) => void;
 }
@@ -28,6 +29,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   phrase,
   selectedTextSize,
   selectedTextFont,
+  fonts,
   textOffsetX,
   textOffsetY,
   updateTextDetails,
@@ -53,6 +55,18 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   const handleFontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     updateNumberDetails("selectedFont", value);
+  };
+
+  const handleFontChangeText = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    updateTextDetails("selectedFont", value);
+  };
+
+  const handleSizeChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^\d*$/.test(value)) {
+      updateTextDetails("selectedSize", value === "" ? "" : parseInt(value));
+    }
   };
 
   // New handler for phrase input
@@ -229,6 +243,40 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       <button onClick={() => moveText("right")}>Move Right</button>
       <button onClick={() => moveText("up")}>Move Up</button>
       <button onClick={() => moveText("down")}>Move Down</button>
+
+      <select
+        id="font-selector"
+        value={selectedTextFont}
+        onChange={handleFontChangeText}
+        style={{
+          padding: "10px",
+          fontSize: "16px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+        }}
+      >
+        <option value="Gasoek One">Gasoek One</option>
+        <option value="Arial Black">Arial Black</option>
+        <option value="Coiny">Coiny</option>
+        {/* Add more fonts */}
+      </select>
+
+      {/* Size input */}
+      <label htmlFor="size-input" style={{ marginBottom: "10px" }}>
+        Choose font size:
+      </label>
+      <input
+        id="size-input"
+        type="text"
+        value={selectedTextSize}
+        onChange={handleSizeChangeText}
+        style={{
+          padding: "10px",
+          fontSize: "16px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+        }}
+      />
     </div>
   );
 };

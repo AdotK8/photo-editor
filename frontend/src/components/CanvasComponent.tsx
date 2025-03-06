@@ -11,6 +11,7 @@ import {
 import * as opentype from "opentype.js";
 import Konva from "konva";
 import { CustomImageData } from "../App";
+import "../styles/CanvasComponent.scss";
 
 interface BBox {
   cx: number;
@@ -30,6 +31,7 @@ interface CanvasComponentProps {
   selectedTextFont: string;
   textOffsetX: number;
   textOffsetY: number;
+  fonts: object;
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
 }
@@ -48,6 +50,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   selectedTextSize,
   textOffsetX,
   textOffsetY,
+  fonts,
   setImages,
 }) => {
   const canvasSize = 800;
@@ -153,44 +156,41 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   }, [images]);
 
   const handleFlip = () => {
-    setImages((prevImages) =>
-      prevImages.map((img) => {
-        if (!img.selected) return img;
+    console.log(selectedTextFont);
+    // setImages((prevImages) =>
+    //   prevImages.map((img) => {
+    //     if (!img.selected) return img;
 
-        const node = imageRefs.current[img.id];
-        if (!node) return img;
+    //     const node = imageRefs.current[img.id];
+    //     if (!node) return img;
 
-        const currentScaleX = img.scaleX ?? 1;
-        const newScaleX = -currentScaleX;
-        const flippedStatus = !img.flipped;
+    //     const currentScaleX = img.scaleX ?? 1;
+    //     const newScaleX = -currentScaleX;
+    //     const flippedStatus = !img.flipped;
 
-        const baseWidth = node.getClientRect().width;
-        const shift = baseWidth / 2;
+    //     const baseWidth = node.getClientRect().width;
+    //     const shift = baseWidth / 2;
+    //     const newX = flippedStatus ? node.x() + shift : node.x() - shift;
 
-        // Adjust X position to prevent flicker
-        const newX = flippedStatus ? node.x() + shift : node.x() - shift;
+    //     node.scaleX(newScaleX);
+    //     node.x(newX);
+    //     node.getLayer()?.batchDraw(); // Force redraw
 
-        // Apply changes directly to the Konva node before React updates state
-        node.scaleX(newScaleX);
-        node.x(newX);
-        node.getLayer()?.batchDraw(); // Force redraw
-
-        return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
-      })
-    );
+    //     return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
+    //   })
+    // );
   };
 
   const handleTransformEnd = (id: number) => {
     const node = imageRefs.current[id];
     if (node) {
-      console.log(node.x());
       const newX = node.x();
       const newY = node.y();
       const newWidth = node.width();
       const newHeight = node.height();
       const newScaleX = node.scaleX();
       const newScaleY = node.scaleY();
-      console.log("rotation " + node.rotation());
+
       setImages((prev: any) => {
         return prev.map((img: any) => {
           if (img.id === id) {
@@ -207,26 +207,29 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
           }
         });
       });
+
       node.scaleX(newScaleX);
       node.scaleY(newScaleY);
     }
   };
 
   const handleReset = () => {
+    console.log(fonts);
     setImages((prevImages) =>
       prevImages.map((img) => {
         if (!img.selected) return img;
 
         const node = imageRefs.current[img.id];
+
         if (!node) return img;
 
         node.rotation(0);
+
         const originalWidth = 200;
         const originalHeight = img.height;
         const newX = canvasSize / 2 - originalWidth / 2;
         const newY = canvasSize / 2 - originalHeight / 2;
 
-        // Reset scale and dimensions
         node.scaleX(1);
         node.scaleY(1);
 
@@ -251,6 +254,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     const node = imageRefs.current[id];
     if (node) {
       const layer = node.getLayer();
+
       layer?.moveToTop();
       outlineLayerRef.current?.moveToTop();
       transformerRefs.current[id]?.nodes([node]);
@@ -348,15 +352,16 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         {/* Text Layer */}
         <Layer>
           <Text
-            ref={textRef} // Attach the text reference
+            ref={textRef}
             text={phrase}
             fontSize={selectedTextSize}
-            fontFamily={selectedTextFont.replace(".ttf", "")}
+            fontFamily={selectedTextFont}
             width={canvasSize}
             align="center"
             fill="black"
             x={textOffsetX}
             y={textOffsetY}
+            className="phrase"
           />
         </Layer>
 
