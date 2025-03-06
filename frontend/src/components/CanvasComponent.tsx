@@ -32,7 +32,7 @@ interface CanvasComponentProps {
   textOffsetX: number;
   textOffsetY: number;
   textRotation: number;
-  fonts: object;
+
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
 }
@@ -52,7 +52,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   textOffsetX,
   textOffsetY,
   textRotation,
-  fonts,
   setImages,
 }) => {
   const canvasSize = 800;
@@ -215,7 +214,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   };
 
   const handleReset = () => {
-    console.log(fonts);
     setImages((prevImages) =>
       prevImages.map((img) => {
         if (!img.selected) return img;

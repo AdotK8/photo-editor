@@ -29,16 +29,14 @@ function App() {
 
   const [textDetails, setTextDetails] = useState({
     phrase: "Happy Birthday",
-    selectedFont: "Gasoek One",
-    selectedSize: 60,
+    selectedFont: "Monsieur La Doulaise",
+    selectedSize: 90,
     textOffsetX: 0,
     textOffsetY: 50,
     textRotation: 0,
   });
 
   const canvasSize = 800;
-
-  const fonts = ["Gasoek One", "Coiny"];
 
   const [images, setImages] = useState<CustomImageData[]>(() => {
     const img1 = new Image();
@@ -125,7 +123,6 @@ function App() {
           offsetY={numberDetails.offsetY}
           rotation={numberDetails.rotation}
           phrase={textDetails.phrase}
-          fonts={fonts}
           selectedTextSize={textDetails.selectedSize}
           selectedTextFont={textDetails.selectedFont}
           textOffsetX={textDetails.textOffsetX}
