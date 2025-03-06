@@ -137,6 +137,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateTextDetails("textOffsetX", 0);
     updateTextDetails("textOffsetY", 50);
     updateTextDetails("textRotation", 0);
+    updateTextDetails("selectedSize", 90);
     updateTextDetails("phrase", "Happy Birthday");
   };
 
