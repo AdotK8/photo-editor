@@ -280,6 +280,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="Arial Black">Arial Black</option>
         <option value="Coiny">Coiny</option>
         <option value="Monsieur La Doulaise">Monsieur La Doulaise</option>
+        <option value="Imperial Script">Imperial Script</option>
         {/* Add more fonts */}
       </select>
 
