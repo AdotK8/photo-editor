@@ -34,6 +34,7 @@ function App() {
     textOffsetX: 0,
     textOffsetY: 80,
     textRotation: 0,
+    textColor: "#FF0000",
   });
 
   const canvasSize = 800;
@@ -108,6 +109,7 @@ function App() {
         textOffsetX={textDetails.textOffsetX}
         textOffsetY={textDetails.textOffsetY}
         textRotation={textDetails.textRotation}
+        textColor={textDetails.textColor}
         updateNumberDetails={updateNumberDetails}
         updateTextDetails={updateTextDetails}
       />
@@ -129,6 +131,7 @@ function App() {
           textOffsetY={textDetails.textOffsetY}
           textRotation={textDetails.textRotation}
           images={images}
+          textColor={textDetails.textColor}
           setImages={setImages}
         />
       </div>

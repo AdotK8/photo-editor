@@ -14,7 +14,7 @@ interface ControlPanelProps {
   textOffsetX: number;
   textOffsetY: number;
   textRotation: number;
-
+  textColor: string;
   updateTextDetails: (key: string, value: string | number) => void;
   updateNumberDetails: (key: string, value: string | number) => void;
 }
@@ -33,6 +33,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   textRotation,
   textOffsetX,
   textOffsetY,
+  textColor,
   updateTextDetails,
   updateNumberDetails,
 }) => {
@@ -70,7 +71,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     }
   };
 
-  // New handler for phrase input
   const handlePhraseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     updateTextDetails("phrase", value);
@@ -139,6 +139,10 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateTextDetails("textRotation", 0);
     updateTextDetails("selectedSize", 90);
     updateTextDetails("phrase", "Happy Birthday");
+  };
+
+  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    updateTextDetails("textColor", e.target.value);
   };
 
   return (
@@ -293,6 +297,23 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           fontSize: "16px",
           border: "1px solid #ccc",
           borderRadius: "4px",
+        }}
+      />
+
+      <label htmlFor="text-color" style={{ marginTop: "20px" }}>
+        Text Color:
+      </label>
+      <input
+        id="text-color"
+        type="color"
+        value={textColor}
+        onChange={handleColorChange}
+        style={{
+          width: "100%",
+          padding: "5px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
         }}
       />
     </div>

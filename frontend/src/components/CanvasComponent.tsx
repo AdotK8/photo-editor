@@ -32,6 +32,7 @@ interface CanvasComponentProps {
   textOffsetX: number;
   textOffsetY: number;
   textRotation: number;
+  textColor: string;
 
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
@@ -52,6 +53,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   textOffsetX,
   textOffsetY,
   textRotation,
+  textColor,
   setImages,
 }) => {
   const canvasSize = 800;
@@ -357,10 +359,9 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
             fontFamily={selectedTextFont}
             width={canvasSize}
             align="center"
-            fill="black"
+            fill={textColor}
             x={textOffsetX}
             y={textOffsetY}
-            className="phrase"
             rotation={textRotation}
           />
         </Layer>
