@@ -23,7 +23,7 @@ function App() {
     selectedSize: 550,
     strokeWidth: 2,
     offsetX: 0,
-    offsetY: 0,
+    offsetY: -30,
     rotation: 0,
   });
 
@@ -32,7 +32,7 @@ function App() {
     selectedFont: "Monsieur La Doulaise",
     selectedSize: 90,
     textOffsetX: 0,
-    textOffsetY: 50,
+    textOffsetY: 80,
     textRotation: 0,
   });
 
