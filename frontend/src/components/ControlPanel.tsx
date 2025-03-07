@@ -30,101 +30,69 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   phrase,
   selectedTextSize,
   selectedTextFont,
-  textRotation,
   textOffsetX,
   textOffsetY,
+  textRotation,
   textColor,
   updateTextDetails,
   updateNumberDetails,
 }) => {
-  const handleNumberChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Generic handler for input changes
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+    key: string,
+    isNumber: boolean = false,
+    isText: boolean = false
+  ) => {
     const value = e.target.value;
-    if (/^\d*$/.test(value)) {
-      updateNumberDetails(
-        "selectedNumber",
-        value === "" ? "" : parseInt(value)
-      );
-    }
+    const updateFn = isText ? updateTextDetails : updateNumberDetails;
+
+    if (isNumber && !/^\d*$/.test(value)) return; // Restrict to digits if numeric
+    updateFn(key, value === "" ? "" : isNumber ? parseInt(value) : value);
   };
 
-  const handleSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (/^\d*$/.test(value)) {
-      updateNumberDetails("selectedSize", value === "" ? "" : parseInt(value));
-    }
+  // Combined move function for both number and text
+  const handleMove = (
+    direction: "left" | "right" | "up" | "down",
+    isText: boolean = false
+  ) => {
+    const updateFn = isText ? updateTextDetails : updateNumberDetails;
+    const step = 10;
+
+    // Define the updates object with proper typing
+    const updates: { [key: string]: { key: string; value: number } } = {
+      left: isText
+        ? { key: "textOffsetX", value: textOffsetX - step }
+        : { key: "offsetX", value: offsetX + step },
+      right: isText
+        ? { key: "textOffsetX", value: textOffsetX + step }
+        : { key: "offsetX", value: offsetX - step },
+      up: isText
+        ? { key: "textOffsetY", value: textOffsetY - step }
+        : { key: "offsetY", value: offsetY + step },
+      down: isText
+        ? { key: "textOffsetY", value: textOffsetY + step }
+        : { key: "offsetY", value: offsetY - step },
+    };
+
+    const { key, value } = updates[direction];
+    updateFn(key, value);
   };
 
-  const handleFontChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    updateNumberDetails("selectedFont", value);
+  // Combined rotate function for both number and text
+  const handleRotate = (
+    direction: "left" | "right",
+    isText: boolean = false
+  ) => {
+    const updateFn = isText ? updateTextDetails : updateNumberDetails;
+    const key = isText ? "textRotation" : "rotation";
+    const currentValue = isText ? textRotation : rotation;
+    const value = direction === "left" ? currentValue + 1 : currentValue - 1;
+    updateFn(key, value);
   };
 
-  const handleFontChangeText = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value = e.target.value;
-    updateTextDetails("selectedFont", value);
-  };
-
-  const handleSizeChangeText = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (/^\d*$/.test(value)) {
-      updateTextDetails("selectedSize", value === "" ? "" : parseInt(value));
-    }
-  };
-
-  const handlePhraseChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    updateTextDetails("phrase", value);
-  };
-
-  const move = (direction: "left" | "right" | "up" | "down") => {
-    switch (direction) {
-      case "left":
-        updateNumberDetails("offsetX", offsetX + 10);
-        break;
-      case "right":
-        updateNumberDetails("offsetX", offsetX - 10);
-        break;
-      case "up":
-        updateNumberDetails("offsetY", offsetY + 10);
-        break;
-      case "down":
-        updateNumberDetails("offsetY", offsetY - 10);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const moveText = (direction: "left" | "right" | "up" | "down") => {
-    switch (direction) {
-      case "left":
-        updateTextDetails("textOffsetX", textOffsetX - 10);
-        break;
-      case "right":
-        updateTextDetails("textOffsetX", textOffsetX + 10);
-        break;
-      case "up":
-        updateTextDetails("textOffsetY", textOffsetY - 10);
-        break;
-      case "down":
-        updateTextDetails("textOffsetY", textOffsetY + 10);
-        break;
-      default:
-        break;
-    }
-  };
-
-  const rotate = (direction: "left" | "right") => {
-    const value = direction === "left" ? rotation + 1 : rotation - 1;
-    updateNumberDetails("rotation", value);
-  };
-
-  const rotateText = (direction: "left" | "right") => {
-    const value = direction === "left" ? textRotation + 1 : textRotation - 1;
-    updateTextDetails("textRotation", value);
-  };
-
-  const reset = () => {
+  // Reset functions (kept separate for clarity, but could be combined if desired)
+  const resetNumber = () => {
     updateNumberDetails("offsetX", 0);
     updateNumberDetails("offsetY", 0);
     updateNumberDetails("rotation", 0);
@@ -141,8 +109,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateTextDetails("phrase", "Happy Birthday");
   };
 
-  const handleColorChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    updateTextDetails("textColor", e.target.value);
+  const handleFontChangeText = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value;
+    updateTextDetails("selectedFont", value);
   };
 
   return (
@@ -159,7 +128,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     >
       <h3>Control Panel</h3>
 
-      {/* Number input */}
+      {/* Number Input */}
       <label htmlFor="number-input" style={{ marginBottom: "10px" }}>
         Choose a number:
       </label>
@@ -167,7 +136,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         id="number-input"
         type="text"
         value={selectedNumber}
-        onChange={handleNumberChange}
+        onChange={(e) => handleInputChange(e, "selectedNumber", true)}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -176,7 +145,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         }}
       />
 
-      {/* Size input */}
+      {/* Size Input (Number) */}
       <label htmlFor="size-input" style={{ marginBottom: "10px" }}>
         Choose font size:
       </label>
@@ -184,7 +153,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         id="size-input"
         type="text"
         value={selectedSize}
-        onChange={handleSizeChange}
+        onChange={(e) => handleInputChange(e, "selectedSize", true)}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -193,14 +162,14 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         }}
       />
 
-      {/* Font selector */}
+      {/* Font Selector (Number) */}
       <label htmlFor="font-selector" style={{ marginTop: "20px" }}>
         Choose a font:
       </label>
       <select
         id="font-selector"
         value={selectedFont}
-        onChange={handleFontChange}
+        onChange={(e) => handleInputChange(e, "selectedFont")}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -211,10 +180,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="GasoekOne.ttf">Gasoek One</option>
         <option value="arial_black.ttf">Arial Black</option>
         <option value="Coiny-Regular.ttf">Coiny</option>
-        {/* Add more fonts */}
       </select>
 
-      {/* New Phrase input */}
+      {/* Phrase Input */}
       <label htmlFor="phrase-input" style={{ marginTop: "20px" }}>
         Enter text phrase:
       </label>
@@ -222,7 +190,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         id="phrase-input"
         type="text"
         value={phrase}
-        onChange={handlePhraseChange}
+        onChange={(e) => handleInputChange(e, "phrase", false, true)}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -232,13 +200,16 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         }}
       />
 
-      <button onClick={() => move("left")}>Move Left</button>
-      <button onClick={() => move("right")}>Move Right</button>
-      <button onClick={() => move("up")}>Move Up</button>
-      <button onClick={() => move("down")}>Move Down</button>
-      <button onClick={() => rotate("left")}>Rotate Left</button>
-      <button onClick={() => rotate("right")}>Rotate Right</button>
-      <button onClick={reset}>Reset</button>
+      {/* Number Controls */}
+      <button onClick={() => handleMove("left")}>Move Left</button>
+      <button onClick={() => handleMove("right")}>Move Right</button>
+      <button onClick={() => handleMove("up")}>Move Up</button>
+      <button onClick={() => handleMove("down")}>Move Down</button>
+      <button onClick={() => handleRotate("left")}>Rotate Left</button>
+      <button onClick={() => handleRotate("right")}>Rotate Right</button>
+      <button onClick={resetNumber}>Reset</button>
+
+      {/* Stroke Width */}
       <label htmlFor="stroke-width" style={{ marginTop: "20px" }}>
         Stroke Width:
       </label>
@@ -251,22 +222,27 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         onChange={(e) =>
           updateNumberDetails("strokeWidth", parseInt(e.target.value))
         }
-        style={{
-          width: "100%",
-          marginBottom: "10px",
-        }}
+        style={{ width: "100%", marginBottom: "10px" }}
       />
 
-      <button onClick={() => moveText("left")}>Move Left</button>
-      <button onClick={() => moveText("right")}>Move Right</button>
-      <button onClick={() => moveText("up")}>Move Up</button>
-      <button onClick={() => moveText("down")}>Move Down</button>
-      <button onClick={() => rotateText("left")}>Rotate Left</button>
-      <button onClick={() => rotateText("right")}>Rotate Right</button>
-      <button onClick={resetText}>Reset</button>
+      {/* Text Controls */}
+      <button onClick={() => handleMove("left", true)}>Move Left (Text)</button>
+      <button onClick={() => handleMove("right", true)}>
+        Move Right (Text)
+      </button>
+      <button onClick={() => handleMove("up", true)}>Move Up (Text)</button>
+      <button onClick={() => handleMove("down", true)}>Move Down (Text)</button>
+      <button onClick={() => handleRotate("left", true)}>
+        Rotate Left (Text)
+      </button>
+      <button onClick={() => handleRotate("right", true)}>
+        Rotate Right (Text)
+      </button>
+      <button onClick={resetText}>Reset Text</button>
 
+      {/* Font Selector (Text) */}
       <select
-        id="font-selector"
+        id="font-selector-text"
         value={selectedTextFont}
         onChange={handleFontChangeText}
         style={{
@@ -281,18 +257,17 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="Coiny">Coiny</option>
         <option value="Monsieur La Doulaise">Monsieur La Doulaise</option>
         <option value="Imperial Script">Imperial Script</option>
-        {/* Add more fonts */}
       </select>
 
-      {/* Size input */}
-      <label htmlFor="size-input" style={{ marginBottom: "10px" }}>
-        Choose font size:
+      {/* Size Input (Text) */}
+      <label htmlFor="size-input-text" style={{ marginBottom: "10px" }}>
+        Choose text font size:
       </label>
       <input
-        id="size-input"
+        id="size-input-text"
         type="text"
         value={selectedTextSize}
-        onChange={handleSizeChangeText}
+        onChange={(e) => handleInputChange(e, "selectedTextSize", true, true)}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -301,6 +276,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         }}
       />
 
+      {/* Text Color */}
       <label htmlFor="text-color" style={{ marginTop: "20px" }}>
         Text Color:
       </label>
@@ -308,7 +284,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         id="text-color"
         type="color"
         value={textColor}
-        onChange={handleColorChange}
+        onChange={(e) => handleInputChange(e, "textColor", false, true)}
         style={{
           width: "100%",
           padding: "5px",
