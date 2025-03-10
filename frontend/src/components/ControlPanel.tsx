@@ -57,7 +57,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     isText: boolean = false
   ) => {
     const updateFn = isText ? updateMessageDetails : updateNumberDetails;
-    const step = 1;
+    const step = 10;
+    console.log(numberOffsetY);
 
     // Define the updates object with proper typing
     const updates: { [key: string]: { key: string; value: number } } = {

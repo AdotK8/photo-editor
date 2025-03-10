@@ -102,7 +102,7 @@ function App() {
         numberSize={numberDetails.numberSize}
         strokeWidth={numberDetails.strokeWidth}
         numberOffsetX={numberDetails.numberOffsetX}
-        numberOffsetY={numberDetails.numberOffsetX}
+        numberOffsetY={numberDetails.numberOffsetY}
         numberRotation={numberDetails.numberRotation}
         messageContents={messageDetails.messageContents}
         messageSize={messageDetails.messageSize}
