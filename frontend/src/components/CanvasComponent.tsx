@@ -19,41 +19,40 @@ interface BBox {
 }
 
 interface CanvasComponentProps {
-  selectedNumber: number;
-  selectedFont: string;
-  selectedSize: number;
+  selectedNumber: string | number;
+  numberFont: string;
+  numberSize: string | number;
   strokeWidth: number;
-  offsetX: number;
-  offsetY: number;
-  rotation: number;
-  phrase: string;
-  selectedTextSize: number;
-  selectedTextFont: string;
-  textOffsetX: number;
-  textOffsetY: number;
-  textRotation: number;
-  textColor: string;
-
+  numberOffsetX: number;
+  numberOffsetY: number;
+  numberRotation: number;
+  messageContents: string;
+  messageSize: number;
+  messageFont: string;
+  messageOffsetX: number;
+  messageOffsetY: number;
+  messageRotation: number;
+  messageColor: string;
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
 }
 
 const CanvasComponent: React.FC<CanvasComponentProps> = ({
   selectedNumber,
-  selectedFont,
-  selectedSize,
+  numberFont,
+  numberSize,
   strokeWidth,
-  offsetX,
-  offsetY,
-  rotation,
+  numberOffsetX,
+  numberOffsetY,
+  numberRotation,
+  messageContents,
+  messageSize,
+  messageFont,
+  messageOffsetX,
+  messageOffsetY,
+  messageRotation,
+  messageColor,
   images,
-  phrase,
-  selectedTextFont,
-  selectedTextSize,
-  textOffsetX,
-  textOffsetY,
-  textRotation,
-  textColor,
   setImages,
 }) => {
   const canvasSize = 800;
@@ -117,22 +116,17 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
 
   // Load font and generate the mask path.
   useEffect(() => {
-    const fontPath = `/fonts/${selectedFont}`;
+    const fontPath = `/fonts/${numberFont}`;
     opentype.load(fontPath, (err: any, font: any) => {
       if (err) {
         console.error("Font load error:", err);
         return;
       }
       try {
-        const pathObj = font.getPath(
-          String(selectedNumber),
-          0,
-          0,
-          selectedSize
-        );
+        const pathObj = font.getPath(String(selectedNumber), 0, 0, numberSize);
         const bbox = pathObj.getBoundingBox();
-        const cx = (bbox.x1 + bbox.x2) / 2 + offsetX;
-        const cy = (bbox.y1 + bbox.y2) / 2 + offsetY;
+        const cx = (bbox.x1 + bbox.x2) / 2 + numberOffsetX;
+        const cy = (bbox.y1 + bbox.y2) / 2 + numberOffsetY;
         setPathBBox({ cx, cy });
         const svgString = pathObj.toSVG();
         const parser = new DOMParser();
@@ -146,7 +140,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         console.error("Path generation error:", error);
       }
     });
-  }, [selectedNumber, selectedFont, selectedSize, offsetX, offsetY]);
+  }, [selectedNumber, numberFont, numberSize, numberOffsetX, numberOffsetY]);
 
   // Attach transformers to images
   useEffect(() => {
@@ -317,7 +311,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 y={canvasSize / 2 - pathBBox.cy}
                 fill="white"
                 listening={false}
-                rotation={rotation}
+                rotation={numberRotation}
               />
               {/* Image */}
               <KonvaImage
@@ -354,15 +348,15 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         <Layer>
           <Text
             ref={textRef}
-            text={phrase}
-            fontSize={selectedTextSize}
-            fontFamily={selectedTextFont}
+            text={messageContents}
+            fontSize={messageSize}
+            fontFamily={messageFont}
             width={canvasSize}
             align="center"
-            fill={textColor}
-            x={textOffsetX}
-            y={textOffsetY}
-            rotation={textRotation}
+            fill={messageColor}
+            x={messageOffsetX}
+            y={messageOffsetY}
+            rotation={messageRotation}
           />
         </Layer>
 
@@ -376,7 +370,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
               stroke="black"
               strokeWidth={strokeWidth}
               listening={false}
-              rotation={rotation}
+              rotation={numberRotation}
               globalCompositeOperation="source-over"
             />
           )}

@@ -2,39 +2,39 @@ import React from "react";
 
 interface ControlPanelProps {
   selectedNumber: string | number;
-  selectedFont: string;
-  selectedSize: string | number;
+  numberFont: string;
+  numberSize: string | number;
   strokeWidth: number;
-  offsetX: number;
-  offsetY: number;
-  rotation: number;
-  phrase: string;
-  selectedTextSize: number;
-  selectedTextFont: string;
-  textOffsetX: number;
-  textOffsetY: number;
-  textRotation: number;
-  textColor: string;
-  updateTextDetails: (key: string, value: string | number) => void;
+  numberOffsetX: number;
+  numberOffsetY: number;
+  numberRotation: number;
+  messageContents: string;
+  messageSize: number;
+  messageFont: string;
+  messageOffsetX: number;
+  messageOffsetY: number;
+  messageRotation: number;
+  messageColor: string;
+  updateMessageDetails: (key: string, value: string | number) => void;
   updateNumberDetails: (key: string, value: string | number) => void;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
   selectedNumber,
-  selectedFont,
-  selectedSize,
+  numberFont,
+  numberSize,
   strokeWidth,
-  offsetX,
-  offsetY,
-  rotation,
-  phrase,
-  selectedTextSize,
-  selectedTextFont,
-  textOffsetX,
-  textOffsetY,
-  textRotation,
-  textColor,
-  updateTextDetails,
+  numberOffsetX,
+  numberOffsetY,
+  numberRotation,
+  messageContents,
+  messageSize,
+  messageFont,
+  messageOffsetX,
+  messageOffsetY,
+  messageRotation,
+  messageColor,
+  updateMessageDetails,
   updateNumberDetails,
 }) => {
   // Generic handler for input changes
@@ -45,7 +45,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     isText: boolean = false
   ) => {
     const value = e.target.value;
-    const updateFn = isText ? updateTextDetails : updateNumberDetails;
+    const updateFn = isText ? updateMessageDetails : updateNumberDetails;
 
     if (isNumber && !/^\d*$/.test(value)) return; // Restrict to digits if numeric
     updateFn(key, value === "" ? "" : isNumber ? parseInt(value) : value);
@@ -56,23 +56,23 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     direction: "left" | "right" | "up" | "down",
     isText: boolean = false
   ) => {
-    const updateFn = isText ? updateTextDetails : updateNumberDetails;
-    const step = 10;
+    const updateFn = isText ? updateMessageDetails : updateNumberDetails;
+    const step = 1;
 
     // Define the updates object with proper typing
     const updates: { [key: string]: { key: string; value: number } } = {
       left: isText
-        ? { key: "textOffsetX", value: textOffsetX - step }
-        : { key: "offsetX", value: offsetX + step },
+        ? { key: "messageOffsetX", value: messageOffsetX - step }
+        : { key: "numberOffsetX", value: numberOffsetX + step },
       right: isText
-        ? { key: "textOffsetX", value: textOffsetX + step }
-        : { key: "offsetX", value: offsetX - step },
+        ? { key: "messageOffsetX", value: messageOffsetX + step }
+        : { key: "numberOffsetX", value: numberOffsetX - step },
       up: isText
-        ? { key: "textOffsetY", value: textOffsetY - step }
-        : { key: "offsetY", value: offsetY + step },
+        ? { key: "messageOffsetY", value: messageOffsetY - step }
+        : { key: "numberOffsetY", value: numberOffsetY + step },
       down: isText
-        ? { key: "textOffsetY", value: textOffsetY + step }
-        : { key: "offsetY", value: offsetY - step },
+        ? { key: "messageOffsetY", value: messageOffsetY + step }
+        : { key: "numberOffsetY", value: numberOffsetY - step },
     };
 
     const { key, value } = updates[direction];
@@ -84,34 +84,34 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     direction: "left" | "right",
     isText: boolean = false
   ) => {
-    const updateFn = isText ? updateTextDetails : updateNumberDetails;
-    const key = isText ? "textRotation" : "rotation";
-    const currentValue = isText ? textRotation : rotation;
+    const updateFn = isText ? updateMessageDetails : updateNumberDetails;
+    const key = isText ? "messageRotation" : "numberRotation";
+    const currentValue = isText ? messageRotation : numberRotation;
     const value = direction === "left" ? currentValue + 1 : currentValue - 1;
     updateFn(key, value);
   };
 
   // Reset functions (kept separate for clarity, but could be combined if desired)
   const resetNumber = () => {
-    updateNumberDetails("offsetX", 0);
-    updateNumberDetails("offsetY", 0);
-    updateNumberDetails("rotation", 0);
+    updateNumberDetails("numberOffsetX", 0);
+    updateNumberDetails("numberOffsetY", -30);
+    updateNumberDetails("numberRotation", 0);
     updateNumberDetails("selectedNumber", 20);
-    updateNumberDetails("selectedSize", 550);
-    updateNumberDetails("selectedFont", "GasoekOne.ttf");
+    updateNumberDetails("numberSize", 550);
+    updateNumberDetails("numberFont", "GasoekOne.ttf");
   };
 
   const resetText = () => {
-    updateTextDetails("textOffsetX", 0);
-    updateTextDetails("textOffsetY", 50);
-    updateTextDetails("textRotation", 0);
-    updateTextDetails("selectedSize", 90);
-    updateTextDetails("phrase", "Happy Birthday");
+    updateMessageDetails("messageOffsetX", 0);
+    updateMessageDetails("messageOffsetY", 80);
+    updateMessageDetails("messageRotation", 0);
+    updateMessageDetails("messageSize", 90);
+    updateMessageDetails("messageContents", "Happy Birthday");
   };
 
   const handleFontChangeText = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
-    updateTextDetails("selectedFont", value);
+    updateMessageDetails("messageFont", value);
   };
 
   return (
@@ -152,8 +152,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       <input
         id="size-input"
         type="text"
-        value={selectedSize}
-        onChange={(e) => handleInputChange(e, "selectedSize", true)}
+        value={numberSize}
+        onChange={(e) => handleInputChange(e, "numberSize", true)}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -168,8 +168,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </label>
       <select
         id="font-selector"
-        value={selectedFont}
-        onChange={(e) => handleInputChange(e, "selectedFont")}
+        value={numberFont}
+        onChange={(e) => handleInputChange(e, "numberFont")}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -182,15 +182,15 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="Coiny-Regular.ttf">Coiny</option>
       </select>
 
-      {/* Phrase Input */}
-      <label htmlFor="phrase-input" style={{ marginTop: "20px" }}>
+      {/* Message Input */}
+      <label htmlFor="message-input" style={{ marginTop: "20px" }}>
         Enter text phrase:
       </label>
       <input
-        id="phrase-input"
+        id="message-input"
         type="text"
-        value={phrase}
-        onChange={(e) => handleInputChange(e, "phrase", false, true)}
+        value={messageContents}
+        onChange={(e) => handleInputChange(e, "messageContents", false, true)}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -200,7 +200,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         }}
       />
 
-      {/* Number Controls */}
+      {/* Number movement Controls */}
       <button onClick={() => handleMove("left")}>Move Left</button>
       <button onClick={() => handleMove("right")}>Move Right</button>
       <button onClick={() => handleMove("up")}>Move Up</button>
@@ -225,7 +225,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         style={{ width: "100%", marginBottom: "10px" }}
       />
 
-      {/* Text Controls */}
+      {/* Message Controls */}
       <button onClick={() => handleMove("left", true)}>Move Left (Text)</button>
       <button onClick={() => handleMove("right", true)}>
         Move Right (Text)
@@ -243,7 +243,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       {/* Font Selector (Text) */}
       <select
         id="font-selector-text"
-        value={selectedTextFont}
+        value={messageFont}
         onChange={handleFontChangeText}
         style={{
           padding: "10px",
@@ -266,8 +266,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       <input
         id="size-input-text"
         type="text"
-        value={selectedTextSize}
-        onChange={(e) => handleInputChange(e, "selectedTextSize", true, true)}
+        value={messageSize}
+        onChange={(e) => handleInputChange(e, "messageSize", true, true)}
         style={{
           padding: "10px",
           fontSize: "16px",
@@ -283,8 +283,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       <input
         id="text-color"
         type="color"
-        value={textColor}
-        onChange={(e) => handleInputChange(e, "textColor", false, true)}
+        value={messageColor}
+        onChange={(e) => handleInputChange(e, "messageColor", false, true)}
         style={{
           width: "100%",
           padding: "5px",

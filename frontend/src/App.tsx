@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import CanvasComponent from "./components/CanvasComponent";
 import ControlPanel from "./components/ControlPanel";
 import ImagePanel from "./components/ImagePanel";
@@ -19,22 +19,23 @@ function App() {
   //initial number details
   const [numberDetails, setNumberDetails] = useState({
     selectedNumber: 20,
-    selectedFont: "GasoekOne.ttf",
-    selectedSize: 550,
+    numberFont: "GasoekOne.ttf",
+    numberSize: 550,
     strokeWidth: 2,
-    offsetX: 0,
-    offsetY: -30,
-    rotation: 0,
+    numberOffsetX: 0,
+    numberOffsetY: -30,
+    numberRotation: 0,
   });
 
-  const [textDetails, setTextDetails] = useState({
-    phrase: "Happy Birthday",
-    selectedFont: "Monsieur La Doulaise",
-    selectedSize: 90,
-    textOffsetX: 0,
-    textOffsetY: 80,
-    textRotation: 0,
-    textColor: "#FF0000",
+  //initial message details
+  const [messageDetails, setMessageDetails] = useState({
+    messageContents: "Happy Birthday",
+    messageFont: "Monsieur La Doulaise",
+    messageSize: 90,
+    messageOffsetX: 0,
+    messageOffsetY: 80,
+    messageRotation: 0,
+    messageColor: "#FF0000",
   });
 
   const canvasSize = 800;
@@ -80,8 +81,8 @@ function App() {
     }));
   };
 
-  const updateTextDetails = (key: string, value: string | number) => {
-    setTextDetails((prevDetails) => ({
+  const updateMessageDetails = (key: string, value: string | number) => {
+    setMessageDetails((prevDetails) => ({
       ...prevDetails,
       [key]: value,
     }));
@@ -97,41 +98,41 @@ function App() {
       {/* Control Panel */}
       <ControlPanel
         selectedNumber={numberDetails.selectedNumber}
-        selectedFont={numberDetails.selectedFont}
-        selectedSize={numberDetails.selectedSize}
+        numberFont={numberDetails.numberFont}
+        numberSize={numberDetails.numberSize}
         strokeWidth={numberDetails.strokeWidth}
-        offsetX={numberDetails.offsetX}
-        offsetY={numberDetails.offsetY}
-        rotation={numberDetails.rotation}
-        phrase={textDetails.phrase}
-        selectedTextSize={textDetails.selectedSize}
-        selectedTextFont={textDetails.selectedFont}
-        textOffsetX={textDetails.textOffsetX}
-        textOffsetY={textDetails.textOffsetY}
-        textRotation={textDetails.textRotation}
-        textColor={textDetails.textColor}
+        numberOffsetX={numberDetails.numberOffsetX}
+        numberOffsetY={numberDetails.numberOffsetX}
+        numberRotation={numberDetails.numberRotation}
+        messageContents={messageDetails.messageContents}
+        messageSize={messageDetails.messageSize}
+        messageFont={messageDetails.messageFont}
+        messageOffsetX={messageDetails.messageOffsetX}
+        messageOffsetY={messageDetails.messageOffsetY}
+        messageRotation={messageDetails.messageRotation}
+        messageColor={messageDetails.messageColor}
         updateNumberDetails={updateNumberDetails}
-        updateTextDetails={updateTextDetails}
+        updateMessageDetails={updateMessageDetails}
       />
 
       {/* Canvas */}
       <div style={{ flexGrow: 1 }}>
         <CanvasComponent
           selectedNumber={numberDetails.selectedNumber}
-          selectedFont={numberDetails.selectedFont}
-          selectedSize={numberDetails.selectedSize}
+          numberFont={numberDetails.numberFont}
+          numberSize={numberDetails.numberSize}
           strokeWidth={numberDetails.strokeWidth}
-          offsetX={numberDetails.offsetX}
-          offsetY={numberDetails.offsetY}
-          rotation={numberDetails.rotation}
-          phrase={textDetails.phrase}
-          selectedTextSize={textDetails.selectedSize}
-          selectedTextFont={textDetails.selectedFont}
-          textOffsetX={textDetails.textOffsetX}
-          textOffsetY={textDetails.textOffsetY}
-          textRotation={textDetails.textRotation}
+          numberOffsetX={numberDetails.numberOffsetX}
+          numberOffsetY={numberDetails.numberOffsetY}
+          numberRotation={numberDetails.numberRotation}
+          messageContents={messageDetails.messageContents}
+          messageSize={messageDetails.messageSize}
+          messageFont={messageDetails.messageFont}
+          messageOffsetX={messageDetails.messageOffsetX}
+          messageOffsetY={messageDetails.messageOffsetY}
+          messageRotation={messageDetails.messageRotation}
+          messageColor={messageDetails.messageColor}
           images={images}
-          textColor={textDetails.textColor}
           setImages={setImages}
         />
       </div>
