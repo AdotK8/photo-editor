@@ -25,6 +25,7 @@ function App() {
     numberOffsetX: 0,
     numberOffsetY: -30,
     numberRotation: 0,
+    numberColor: "#000000",
   });
 
   //initial message details
@@ -35,7 +36,7 @@ function App() {
     messageOffsetX: 0,
     messageOffsetY: 80,
     messageRotation: 0,
-    messageColor: "#FF0000",
+    messageColor: "#000000",
   });
 
   const canvasSize = 800;
@@ -104,6 +105,7 @@ function App() {
         numberOffsetX={numberDetails.numberOffsetX}
         numberOffsetY={numberDetails.numberOffsetY}
         numberRotation={numberDetails.numberRotation}
+        numberColor={numberDetails.numberColor}
         messageContents={messageDetails.messageContents}
         messageSize={messageDetails.messageSize}
         messageFont={messageDetails.messageFont}
@@ -125,6 +127,7 @@ function App() {
           numberOffsetX={numberDetails.numberOffsetX}
           numberOffsetY={numberDetails.numberOffsetY}
           numberRotation={numberDetails.numberRotation}
+          numberColor={numberDetails.numberColor}
           messageContents={messageDetails.messageContents}
           messageSize={messageDetails.messageSize}
           messageFont={messageDetails.messageFont}

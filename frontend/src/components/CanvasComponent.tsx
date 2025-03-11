@@ -26,6 +26,7 @@ interface CanvasComponentProps {
   numberOffsetX: number;
   numberOffsetY: number;
   numberRotation: number;
+  numberColor: string;
   messageContents: string;
   messageSize: number;
   messageFont: string;
@@ -42,6 +43,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   numberFont,
   numberSize,
   strokeWidth,
+  numberColor,
   numberOffsetX,
   numberOffsetY,
   numberRotation,
@@ -367,7 +369,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
               data={textPath}
               x={canvasSize / 2 - pathBBox.cx}
               y={canvasSize / 2 - pathBBox.cy}
-              stroke="black"
+              stroke={numberColor}
               strokeWidth={strokeWidth}
               listening={false}
               rotation={numberRotation}

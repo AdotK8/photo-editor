@@ -8,6 +8,7 @@ interface ControlPanelProps {
   numberOffsetX: number;
   numberOffsetY: number;
   numberRotation: number;
+  numberColor: string;
   messageContents: string;
   messageSize: number;
   messageFont: string;
@@ -27,6 +28,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   numberOffsetX,
   numberOffsetY,
   numberRotation,
+  numberColor,
   messageContents,
   messageSize,
   messageFont,
@@ -217,13 +219,30 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       <input
         id="stroke-width"
         type="range"
-        min="1"
+        min="0"
         max="10"
         value={strokeWidth}
         onChange={(e) =>
           updateNumberDetails("strokeWidth", parseInt(e.target.value))
         }
         style={{ width: "100%", marginBottom: "10px" }}
+      />
+      {/* Number Color */}
+      <label htmlFor="number-color" style={{ marginTop: "20px" }}>
+        Border Color:
+      </label>
+      <input
+        id="number-color"
+        type="color"
+        value={numberColor}
+        onChange={(e) => handleInputChange(e, "numberColor", false, false)}
+        style={{
+          width: "100%",
+          padding: "5px",
+          border: "none",
+          borderRadius: "4px",
+          cursor: "pointer",
+        }}
       />
 
       {/* Message Controls */}
