@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import CanvasComponent from "./components/CanvasComponent";
 import ControlPanel from "./components/ControlPanel";
 import ImagePanel from "./components/ImagePanel";
+import Konva from "konva";
 
 export interface CustomImageData {
   id: number;
@@ -16,7 +17,6 @@ export interface CustomImageData {
 }
 
 function App() {
-  //initial number details
   const [numberDetails, setNumberDetails] = useState({
     selectedNumber: 20,
     numberFont: "GasoekOne.ttf",
@@ -28,7 +28,6 @@ function App() {
     numberColor: "#000000",
   });
 
-  //initial message details
   const [messageDetails, setMessageDetails] = useState({
     messageContents: "Happy Birthday",
     messageFont: "Monsieur La Doulaise",
@@ -46,8 +45,6 @@ function App() {
     img1.src = "/images/image1.png";
     const img2 = new Image();
     img2.src = "/images/image2.png";
-    const img3 = new Image();
-    img3.src = "/images/image3.png";
     return [
       {
         id: 1,
@@ -74,7 +71,9 @@ function App() {
     ];
   });
 
-  // Function to update both number and font
+  // Lift imageRefs to App level
+  const imageRefs = useRef<{ [key: number]: Konva.Image | null }>({});
+
   const updateNumberDetails = (key: string, value: string | number) => {
     setNumberDetails((prevDetails) => ({
       ...prevDetails,
@@ -90,12 +89,7 @@ function App() {
   };
 
   return (
-    <div
-      style={{
-        display: "flex",
-        height: "100vh",
-      }}
-    >
+    <div style={{ display: "flex", height: "100vh" }}>
       {/* Control Panel */}
       <ControlPanel
         selectedNumber={numberDetails.selectedNumber}
@@ -115,6 +109,9 @@ function App() {
         messageColor={messageDetails.messageColor}
         updateNumberDetails={updateNumberDetails}
         updateMessageDetails={updateMessageDetails}
+        images={images}
+        setImages={setImages}
+        imageRefs={imageRefs}
       />
 
       {/* Canvas */}
@@ -137,6 +134,7 @@ function App() {
           messageColor={messageDetails.messageColor}
           images={images}
           setImages={setImages}
+          imageRefs={imageRefs}
         />
       </div>
 

@@ -36,6 +36,7 @@ interface CanvasComponentProps {
   messageColor: string;
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
+  imageRefs: React.MutableRefObject<{ [key: number]: Konva.Image | null }>;
 }
 
 const CanvasComponent: React.FC<CanvasComponentProps> = ({
@@ -56,6 +57,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   messageColor,
   images,
   setImages,
+  imageRefs,
 }) => {
   const canvasSize = 800;
   const [textPath, setTextPath] = useState<string>("");
@@ -64,13 +66,10 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const outlineLayerRef = useRef<Konva.Layer>(null);
   const textRef = useRef<Konva.Text | null>(null);
 
-  // initialising refs for each image, and tranformers for each image, keyed by image id.
-  const imageRefs = useRef<{ [key: number]: Konva.Image | null }>({});
   const transformerRefs = useRef<{ [key: number]: Konva.Transformer | null }>(
     {}
   );
 
-  //initialising images refs
   const imagesRef = useRef(images);
   useEffect(() => {
     imagesRef.current = images;
@@ -102,7 +101,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
           return;
       }
 
-      e.preventDefault(); // Prevent default scrolling
+      e.preventDefault();
       setImages((prevImages) =>
         prevImages.map((img) =>
           img.id === selectedImage.id
@@ -116,7 +115,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [setImages]);
 
-  // Load font and generate the mask path.
   useEffect(() => {
     const fontPath = `/fonts/${numberFont}`;
     opentype.load(fontPath, (err: any, font: any) => {
@@ -144,7 +142,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     });
   }, [selectedNumber, numberFont, numberSize, numberOffsetX, numberOffsetY]);
 
-  // Attach transformers to images
   useEffect(() => {
     images.forEach((img: any) => {
       if (imageRefs.current[img.id] && transformerRefs.current[img.id]) {
@@ -153,31 +150,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
       }
     });
   }, [images]);
-
-  const handleFlip = () => {
-    setImages((prevImages) =>
-      prevImages.map((img) => {
-        if (!img.selected) return img;
-
-        const node = imageRefs.current[img.id];
-        if (!node) return img;
-
-        const currentScaleX = img.scaleX ?? 1;
-        const newScaleX = -currentScaleX;
-        const flippedStatus = !img.flipped;
-
-        const baseWidth = node.getClientRect().width;
-        const shift = baseWidth / 2;
-        const newX = flippedStatus ? node.x() + shift : node.x() - shift;
-
-        node.scaleX(newScaleX);
-        node.x(newX);
-        node.getLayer()?.batchDraw();
-
-        return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
-      })
-    );
-  };
 
   const handleTransformEnd = (id: number) => {
     const node = imageRefs.current[id];
@@ -189,61 +161,26 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
       const newScaleX = node.scaleX();
       const newScaleY = node.scaleY();
 
-      setImages((prev: any) => {
-        return prev.map((img: any) => {
-          if (img.id === id) {
-            return {
-              ...img,
-              x: newX,
-              y: newY,
-              width: newWidth,
-              height: newHeight,
-              scaleX: node.scaleX(),
-            };
-          } else {
-            return img;
-          }
-        });
-      });
+      setImages((prev: any) =>
+        prev.map((img: any) =>
+          img.id === id
+            ? {
+                ...img,
+                x: newX,
+                y: newY,
+                width: newWidth,
+                height: newHeight,
+                scaleX: node.scaleX(),
+              }
+            : img
+        )
+      );
 
       node.scaleX(newScaleX);
       node.scaleY(newScaleY);
     }
   };
 
-  const handleReset = () => {
-    setImages((prevImages) =>
-      prevImages.map((img) => {
-        if (!img.selected) return img;
-
-        const node = imageRefs.current[img.id];
-
-        if (!node) return img;
-
-        node.rotation(0);
-
-        const originalWidth = 200;
-        const originalHeight = img.height;
-        const newX = canvasSize / 2 - originalWidth / 2;
-        const newY = canvasSize / 2 - originalHeight / 2;
-
-        node.scaleX(1);
-        node.scaleY(1);
-
-        return {
-          ...img,
-          x: newX,
-          y: newY,
-          width: originalWidth,
-          height: originalHeight,
-          scaleX: 1,
-          flipped: false,
-        };
-      })
-    );
-  };
-
-  // When an image is clicked, mark it as selected and unselect others.
   const handleSelect = (id: number) => {
     setImages((prev: any) =>
       prev.map((img: any) => ({ ...img, selected: img.id === id }))
@@ -251,7 +188,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
     const node = imageRefs.current[id];
     if (node) {
       const layer = node.getLayer();
-
       layer?.moveToTop();
       outlineLayerRef.current?.moveToTop();
       transformerRefs.current[id]?.nodes([node]);
@@ -270,26 +206,11 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         alignItems: "center",
       }}
     >
-      <button
-        style={{ position: "absolute", top: 10, left: 10, zIndex: 10 }}
-        onClick={handleFlip}
-      >
-        Flip
-      </button>
-
-      <button
-        style={{ position: "absolute", top: 10, left: 50, zIndex: 10 }}
-        onClick={handleReset}
-      >
-        Reset Image
-      </button>
-
       <Stage
         width={canvasSize}
         height={canvasSize}
         style={{ backgroundColor: "white", border: "4px solid black" }}
       >
-        {/* Background Layer */}
         <Layer>
           <Rect
             x={0}
@@ -300,13 +221,11 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
           />
         </Layer>
 
-        {/* Render each image on its own layer */}
         {fontLoaded &&
           textPath &&
           pathBBox &&
           images.map((img: CustomImageData) => (
             <Layer key={img.id}>
-              {/* Mask Path */}
               <Path
                 data={textPath}
                 x={canvasSize / 2 - pathBBox.cx}
@@ -315,7 +234,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 listening={false}
                 rotation={numberRotation}
               />
-              {/* Image */}
               <KonvaImage
                 image={img.image}
                 ref={(node) => (imageRefs.current[img.id] = node)}
@@ -331,7 +249,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
                 onTransformEnd={() => handleTransformEnd(img.id)}
                 scaleX={img.scaleX}
               />
-              {/* Conditionally render the transformer only if this image is selected */}
               {img.selected && (
                 <Transformer
                   ref={(node) => (transformerRefs.current[img.id] = node)}
@@ -346,7 +263,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
             </Layer>
           ))}
 
-        {/* Text Layer */}
         <Layer>
           <Text
             ref={textRef}
@@ -362,7 +278,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
           />
         </Layer>
 
-        {/* Outline (stroke) Path */}
         <Layer ref={outlineLayerRef}>
           {fontLoaded && textPath && pathBBox && (
             <Path

@@ -1,4 +1,6 @@
 import React from "react";
+import Konva from "konva";
+import { CustomImageData } from "../App";
 
 interface ControlPanelProps {
   selectedNumber: string | number;
@@ -18,6 +20,9 @@ interface ControlPanelProps {
   messageColor: string;
   updateMessageDetails: (key: string, value: string | number) => void;
   updateNumberDetails: (key: string, value: string | number) => void;
+  images: CustomImageData[];
+  setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
+  imageRefs: React.MutableRefObject<{ [key: number]: Konva.Image | null }>;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -38,6 +43,9 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   messageColor,
   updateMessageDetails,
   updateNumberDetails,
+  images,
+  setImages,
+  imageRefs,
 }) => {
   // Generic handler for input changes
   const handleInputChange = (
@@ -49,7 +57,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     const value = e.target.value;
     const updateFn = isText ? updateMessageDetails : updateNumberDetails;
 
-    if (isNumber && !/^\d*$/.test(value)) return; // Restrict to digits if numeric
+    if (isNumber && !/^\d*$/.test(value)) return;
     updateFn(key, value === "" ? "" : isNumber ? parseInt(value) : value);
   };
 
@@ -60,9 +68,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   ) => {
     const updateFn = isText ? updateMessageDetails : updateNumberDetails;
     const step = 10;
-    console.log(numberOffsetY);
 
-    // Define the updates object with proper typing
     const updates: { [key: string]: { key: string; value: number } } = {
       left: isText
         ? { key: "messageOffsetX", value: messageOffsetX - step }
@@ -94,7 +100,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateFn(key, value);
   };
 
-  // Reset functions (kept separate for clarity, but could be combined if desired)
+  // Reset functions
   const resetNumber = () => {
     updateNumberDetails("numberOffsetX", 0);
     updateNumberDetails("numberOffsetY", -30);
@@ -115,6 +121,64 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   const handleFontChangeText = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value = e.target.value;
     updateMessageDetails("messageFont", value);
+  };
+
+  // Moved from CanvasComponent: Handle Flip
+  const handleFlip = () => {
+    setImages((prevImages) =>
+      prevImages.map((img) => {
+        if (!img.selected) return img;
+
+        const node = imageRefs.current[img.id];
+        if (!node) return img;
+
+        const currentScaleX = img.scaleX ?? 1;
+        const newScaleX = -currentScaleX;
+        const flippedStatus = !img.flipped;
+
+        const baseWidth = node.getClientRect().width;
+        const shift = baseWidth / 2;
+        const newX = flippedStatus ? node.x() + shift : node.x() - shift;
+
+        node.scaleX(newScaleX);
+        node.x(newX);
+        node.getLayer()?.batchDraw();
+
+        return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
+      })
+    );
+  };
+
+  const handleReset = () => {
+    setImages((prevImages) =>
+      prevImages.map((img) => {
+        if (!img.selected) return img;
+
+        const node = imageRefs.current[img.id];
+        if (!node) return img;
+
+        node.rotation(0);
+
+        const originalWidth = 200;
+        const originalHeight = img.height;
+        const canvasSize = 800;
+        const newX = canvasSize / 2 - originalWidth / 2;
+        const newY = canvasSize / 2 - originalHeight / 2;
+
+        node.scaleX(1);
+        node.scaleY(1);
+
+        return {
+          ...img,
+          x: newX,
+          y: newY,
+          width: originalWidth,
+          height: originalHeight,
+          scaleX: 1,
+          flipped: false,
+        };
+      })
+    );
   };
 
   return (
@@ -313,6 +377,12 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
           cursor: "pointer",
         }}
       />
+
+      {/* Image Controls */}
+      <button onClick={handleFlip} style={{ marginTop: "20px" }}>
+        Flip Image
+      </button>
+      <button onClick={handleReset}>Reset Image</button>
     </div>
   );
 };
