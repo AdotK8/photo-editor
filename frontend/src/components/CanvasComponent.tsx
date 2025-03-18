@@ -37,6 +37,7 @@ interface CanvasComponentProps {
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
   imageRefs: React.MutableRefObject<{ [key: number]: Konva.Image | null }>;
+  stageRef: React.MutableRefObject<Konva.Stage | null>;
 }
 
 const CanvasComponent: React.FC<CanvasComponentProps> = ({
@@ -58,6 +59,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   images,
   setImages,
   imageRefs,
+  stageRef,
 }) => {
   const canvasSize = 800;
   const [textPath, setTextPath] = useState<string>("");
@@ -65,7 +67,6 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const [fontLoaded, setFontLoaded] = useState(false);
   const outlineLayerRef = useRef<Konva.Layer>(null);
   const textRef = useRef<Konva.Text | null>(null);
-
   const transformerRefs = useRef<{ [key: number]: Konva.Transformer | null }>(
     {}
   );
@@ -207,6 +208,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
       }}
     >
       <Stage
+        ref={stageRef}
         width={canvasSize}
         height={canvasSize}
         style={{ backgroundColor: "white", border: "4px solid black" }}

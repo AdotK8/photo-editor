@@ -1,6 +1,7 @@
 import React from "react";
 import Konva from "konva";
 import { CustomImageData } from "../App";
+import { jsPDF } from "jspdf";
 
 interface ControlPanelProps {
   selectedNumber: string | number;
@@ -23,6 +24,7 @@ interface ControlPanelProps {
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
   imageRefs: React.MutableRefObject<{ [key: number]: Konva.Image | null }>;
+  stageRef: React.MutableRefObject<Konva.Stage | null>;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -46,6 +48,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   images,
   setImages,
   imageRefs,
+  stageRef,
 }) => {
   // Generic handler for input changes
   const handleInputChange = (
@@ -179,6 +182,24 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         };
       })
     );
+  };
+
+  const exportToPDF = () => {
+    if (!stageRef.current) return;
+
+    const dataURL = stageRef.current.toDataURL({
+      pixelRatio: 2,
+    });
+
+    const pdf = new jsPDF({
+      orientation: "portrait",
+      unit: "px",
+      format: [800, 800],
+    });
+
+    pdf.addImage(dataURL, "PNG", 0, 0, 800, 800);
+
+    pdf.save("canvas_export.pdf");
   };
 
   return (
@@ -383,6 +404,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         Flip Image
       </button>
       <button onClick={handleReset}>Reset Image</button>
+
+      {/*Export to PDF Button */}
+      <button onClick={exportToPDF} style={{ marginTop: "20px" }}>
+        Export to PDF
+      </button>
     </div>
   );
 };

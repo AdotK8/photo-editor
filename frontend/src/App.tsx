@@ -17,6 +17,8 @@ export interface CustomImageData {
 }
 
 function App() {
+  const stageRef = useRef<Konva.Stage | null>(null);
+
   const [numberDetails, setNumberDetails] = useState({
     selectedNumber: 20,
     numberFont: "GasoekOne.ttf",
@@ -112,6 +114,7 @@ function App() {
         images={images}
         setImages={setImages}
         imageRefs={imageRefs}
+        stageRef={stageRef} // Pass stageRef to ControlPanel
       />
 
       {/* Canvas */}
@@ -135,6 +138,7 @@ function App() {
           images={images}
           setImages={setImages}
           imageRefs={imageRefs}
+          stageRef={stageRef} // Pass stageRef to ControlPanel
         />
       </div>
 
