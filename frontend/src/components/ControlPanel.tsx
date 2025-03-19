@@ -21,10 +21,10 @@ interface ControlPanelProps {
   messageColor: string;
   updateMessageDetails: (key: string, value: string | number) => void;
   updateNumberDetails: (key: string, value: string | number) => void;
-  images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
   imageRefs: React.MutableRefObject<{ [key: number]: Konva.Image | null }>;
   stageRef: React.MutableRefObject<Konva.Stage | null>;
+  canvasSize: number;
 }
 
 const ControlPanel: React.FC<ControlPanelProps> = ({
@@ -45,12 +45,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   messageColor,
   updateMessageDetails,
   updateNumberDetails,
-  images,
   setImages,
   imageRefs,
   stageRef,
+  canvasSize,
 }) => {
-  // Generic handler for input changes
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     key: string,
@@ -64,7 +63,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateFn(key, value === "" ? "" : isNumber ? parseInt(value) : value);
   };
 
-  // Combined move function for both number and text
   const handleMove = (
     direction: "left" | "right" | "up" | "down",
     isText: boolean = false
@@ -91,7 +89,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateFn(key, value);
   };
 
-  // Combined rotate function for both number and text
   const handleRotate = (
     direction: "left" | "right",
     isText: boolean = false
@@ -103,7 +100,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateFn(key, value);
   };
 
-  // Reset functions
   const resetNumber = () => {
     updateNumberDetails("numberOffsetX", 0);
     updateNumberDetails("numberOffsetY", -30);
@@ -126,7 +122,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateMessageDetails("messageFont", value);
   };
 
-  // Moved from CanvasComponent: Handle Flip
   const handleFlip = () => {
     setImages((prevImages) =>
       prevImages.map((img) => {
@@ -164,7 +159,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
 
         const originalWidth = 200;
         const originalHeight = img.height;
-        const canvasSize = 800;
         const newX = canvasSize / 2 - originalWidth / 2;
         const newY = canvasSize / 2 - originalHeight / 2;
 
@@ -187,19 +181,25 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   const exportToPDF = () => {
     if (!stageRef.current) return;
 
-    const dataURL = stageRef.current.toDataURL({
-      pixelRatio: 2,
-    });
+    setImages((prevImages) =>
+      prevImages.map((img) => ({ ...img, selected: false }))
+    );
 
-    const pdf = new jsPDF({
-      orientation: "portrait",
-      unit: "px",
-      format: [800, 800],
-    });
+    setTimeout(() => {
+      const dataURL = stageRef.current!.toDataURL({
+        pixelRatio: 2,
+      });
 
-    pdf.addImage(dataURL, "PNG", 0, 0, 800, 800);
+      const pdf = new jsPDF({
+        orientation: "portrait",
+        unit: "px",
+        format: [canvasSize, canvasSize],
+      });
 
-    pdf.save("canvas_export.pdf");
+      pdf.addImage(dataURL, "PNG", 0, 0, canvasSize, canvasSize);
+
+      pdf.save("canvas_export.pdf");
+    }, 100);
   };
 
   return (
@@ -233,7 +233,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         }}
       />
 
-      {/* Size Input (Number) */}
+      {/* Number Size Input */}
       <label htmlFor="size-input" style={{ marginBottom: "10px" }}>
         Choose font size:
       </label>
@@ -250,7 +250,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         }}
       />
 
-      {/* Font Selector (Number) */}
+      {/* Number Font Selector */}
       <label htmlFor="font-selector" style={{ marginTop: "20px" }}>
         Choose a font:
       </label>
@@ -345,7 +345,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </button>
       <button onClick={resetText}>Reset Text</button>
 
-      {/* Font Selector (Text) */}
+      {/* Message Font Selector */}
       <select
         id="font-selector-text"
         value={messageFont}
@@ -364,7 +364,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="Imperial Script">Imperial Script</option>
       </select>
 
-      {/* Size Input (Text) */}
+      {/* Message Size Input */}
       <label htmlFor="size-input-text" style={{ marginBottom: "10px" }}>
         Choose text font size:
       </label>
@@ -381,7 +381,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         }}
       />
 
-      {/* Text Color */}
+      {/* Message Color */}
       <label htmlFor="text-color" style={{ marginTop: "20px" }}>
         Text Color:
       </label>

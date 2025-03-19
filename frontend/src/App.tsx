@@ -73,7 +73,6 @@ function App() {
     ];
   });
 
-  // Lift imageRefs to App level
   const imageRefs = useRef<{ [key: number]: Konva.Image | null }>({});
 
   const updateNumberDetails = (key: string, value: string | number) => {
@@ -111,10 +110,10 @@ function App() {
         messageColor={messageDetails.messageColor}
         updateNumberDetails={updateNumberDetails}
         updateMessageDetails={updateMessageDetails}
-        images={images}
         setImages={setImages}
         imageRefs={imageRefs}
-        stageRef={stageRef} // Pass stageRef to ControlPanel
+        stageRef={stageRef}
+        canvasSize={canvasSize}
       />
 
       {/* Canvas */}
@@ -138,7 +137,8 @@ function App() {
           images={images}
           setImages={setImages}
           imageRefs={imageRefs}
-          stageRef={stageRef} // Pass stageRef to ControlPanel
+          stageRef={stageRef}
+          canvasSize={canvasSize}
         />
       </div>
 

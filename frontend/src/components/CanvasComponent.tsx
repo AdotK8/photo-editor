@@ -38,6 +38,7 @@ interface CanvasComponentProps {
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
   imageRefs: React.MutableRefObject<{ [key: number]: Konva.Image | null }>;
   stageRef: React.MutableRefObject<Konva.Stage | null>;
+  canvasSize: number;
 }
 
 const CanvasComponent: React.FC<CanvasComponentProps> = ({
@@ -60,8 +61,8 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   setImages,
   imageRefs,
   stageRef,
+  canvasSize,
 }) => {
-  const canvasSize = 800;
   const [textPath, setTextPath] = useState<string>("");
   const [pathBBox, setPathBBox] = useState<BBox | null>(null);
   const [fontLoaded, setFontLoaded] = useState(false);
@@ -150,7 +151,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
         transformerRefs.current[img.id]?.getLayer()?.batchDraw();
       }
     });
-  }, [images]);
+  });
 
   const handleTransformEnd = (id: number) => {
     const node = imageRefs.current[id];
