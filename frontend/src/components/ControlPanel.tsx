@@ -108,6 +108,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateNumberDetails("selectedNumber", 20);
     updateNumberDetails("numberSize", 550);
     updateNumberDetails("numberFont", "GasoekOne.ttf");
+    updateNumberDetails("numberColor", "#000000");
   };
 
   const resetText = () => {
@@ -116,6 +117,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateMessageDetails("messageRotation", 0);
     updateMessageDetails("messageSize", 90);
     updateMessageDetails("messageContents", "Happy Birthday");
+    updateMessageDetails("messageColor", "#000000");
   };
 
   const handleFontChangeText = (e: React.ChangeEvent<HTMLSelectElement>) => {
