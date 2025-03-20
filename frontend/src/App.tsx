@@ -3,6 +3,7 @@ import CanvasComponent from "./components/CanvasComponent";
 import ControlPanel from "./components/ControlPanel";
 import ImagePanel from "./components/ImagePanel";
 import Konva from "konva";
+import "./styles/App.scss";
 
 export interface CustomImageData {
   id: number;
@@ -90,7 +91,7 @@ function App() {
   };
 
   return (
-    <div style={{ display: "flex", height: "100vh" }}>
+    <div className="app-container">
       {/* Control Panel */}
       <ControlPanel
         selectedNumber={numberDetails.selectedNumber}
@@ -117,7 +118,7 @@ function App() {
       />
 
       {/* Canvas */}
-      <div style={{ flexGrow: 1 }}>
+      <div className="canvas-wrapper">
         <CanvasComponent
           selectedNumber={numberDetails.selectedNumber}
           numberFont={numberDetails.numberFont}

@@ -1,3 +1,13 @@
-.phrase {
-  color: red;
+.canvas-container {
+  width: var(--canvas-size);
+  height: var(--canvas-size);
+  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.canvas-stage {
+  background-color: white;
+  border: 2px solid black;
 }

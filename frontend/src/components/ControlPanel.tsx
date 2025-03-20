@@ -2,6 +2,7 @@ import React from "react";
 import Konva from "konva";
 import { CustomImageData } from "../App";
 import { jsPDF } from "jspdf";
+import "../styles/ControlPanel.scss";
 
 interface ControlPanelProps {
   selectedNumber: string | number;
@@ -203,21 +204,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   };
 
   return (
-    <div
-      style={{
-        width: "250px",
-        padding: "20px",
-        backgroundColor: "#f4f4f4",
-        borderRight: "2px solid #ddd",
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-      }}
-    >
+    <div className="control-panel">
       <h3>Control Panel</h3>
 
       {/* Number Input */}
-      <label htmlFor="number-input" style={{ marginBottom: "10px" }}>
+      <label htmlFor="number-input" className="label">
         Choose a number:
       </label>
       <input
@@ -225,16 +216,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         type="text"
         value={selectedNumber}
         onChange={(e) => handleInputChange(e, "selectedNumber", true)}
-        style={{
-          padding: "10px",
-          fontSize: "16px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-        }}
+        className="input"
       />
 
       {/* Number Size Input */}
-      <label htmlFor="size-input" style={{ marginBottom: "10px" }}>
+      <label htmlFor="size-input" className="label">
         Choose font size:
       </label>
       <input
@@ -242,28 +228,18 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         type="text"
         value={numberSize}
         onChange={(e) => handleInputChange(e, "numberSize", true)}
-        style={{
-          padding: "10px",
-          fontSize: "16px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-        }}
+        className="input"
       />
 
       {/* Number Font Selector */}
-      <label htmlFor="font-selector" style={{ marginTop: "20px" }}>
+      <label htmlFor="font-selector" className="label label-top-margin">
         Choose a font:
       </label>
       <select
         id="font-selector"
         value={numberFont}
         onChange={(e) => handleInputChange(e, "numberFont")}
-        style={{
-          padding: "10px",
-          fontSize: "16px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-        }}
+        className="select"
       >
         <option value="GasoekOne.ttf">Gasoek One</option>
         <option value="arial_black.ttf">Arial Black</option>
@@ -271,7 +247,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </select>
 
       {/* Message Input */}
-      <label htmlFor="message-input" style={{ marginTop: "20px" }}>
+      <label htmlFor="message-input" className="label label-top-margin">
         Enter text phrase:
       </label>
       <input
@@ -279,26 +255,34 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         type="text"
         value={messageContents}
         onChange={(e) => handleInputChange(e, "messageContents", false, true)}
-        style={{
-          padding: "10px",
-          fontSize: "16px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-          marginBottom: "20px",
-        }}
+        className="input input-bottom-margin"
       />
 
-      {/* Number movement Controls */}
-      <button onClick={() => handleMove("left")}>Move Left</button>
-      <button onClick={() => handleMove("right")}>Move Right</button>
-      <button onClick={() => handleMove("up")}>Move Up</button>
-      <button onClick={() => handleMove("down")}>Move Down</button>
-      <button onClick={() => handleRotate("left")}>Rotate Left</button>
-      <button onClick={() => handleRotate("right")}>Rotate Right</button>
-      <button onClick={resetNumber}>Reset</button>
+      {/* Number Movement Controls */}
+      <button onClick={() => handleMove("left")} className="button">
+        Move Left
+      </button>
+      <button onClick={() => handleMove("right")} className="button">
+        Move Right
+      </button>
+      <button onClick={() => handleMove("up")} className="button">
+        Move Up
+      </button>
+      <button onClick={() => handleMove("down")} className="button">
+        Move Down
+      </button>
+      <button onClick={() => handleRotate("left")} className="button">
+        Rotate Left
+      </button>
+      <button onClick={() => handleRotate("right")} className="button">
+        Rotate Right
+      </button>
+      <button onClick={resetNumber} className="button">
+        Reset
+      </button>
 
       {/* Stroke Width */}
-      <label htmlFor="stroke-width" style={{ marginTop: "20px" }}>
+      <label htmlFor="stroke-width" className="label label-top-margin">
         Stroke Width:
       </label>
       <input
@@ -310,10 +294,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         onChange={(e) =>
           updateNumberDetails("strokeWidth", parseInt(e.target.value))
         }
-        style={{ width: "100%", marginBottom: "10px" }}
+        className="range-input"
       />
+
       {/* Number Color */}
-      <label htmlFor="number-color" style={{ marginTop: "20px" }}>
+      <label htmlFor="number-color" className="label label-top-margin">
         Border Color:
       </label>
       <input
@@ -321,41 +306,38 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         type="color"
         value={numberColor}
         onChange={(e) => handleInputChange(e, "numberColor", false, false)}
-        style={{
-          width: "100%",
-          padding: "5px",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
+        className="color-input"
       />
 
       {/* Message Controls */}
-      <button onClick={() => handleMove("left", true)}>Move Left (Text)</button>
-      <button onClick={() => handleMove("right", true)}>
+      <button onClick={() => handleMove("left", true)} className="button">
+        Move Left (Text)
+      </button>
+      <button onClick={() => handleMove("right", true)} className="button">
         Move Right (Text)
       </button>
-      <button onClick={() => handleMove("up", true)}>Move Up (Text)</button>
-      <button onClick={() => handleMove("down", true)}>Move Down (Text)</button>
-      <button onClick={() => handleRotate("left", true)}>
+      <button onClick={() => handleMove("up", true)} className="button">
+        Move Up (Text)
+      </button>
+      <button onClick={() => handleMove("down", true)} className="button">
+        Move Down (Text)
+      </button>
+      <button onClick={() => handleRotate("left", true)} className="button">
         Rotate Left (Text)
       </button>
-      <button onClick={() => handleRotate("right", true)}>
+      <button onClick={() => handleRotate("right", true)} className="button">
         Rotate Right (Text)
       </button>
-      <button onClick={resetText}>Reset Text</button>
+      <button onClick={resetText} className="button">
+        Reset Text
+      </button>
 
       {/* Message Font Selector */}
       <select
         id="font-selector-text"
         value={messageFont}
         onChange={handleFontChangeText}
-        style={{
-          padding: "10px",
-          fontSize: "16px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-        }}
+        className="select"
       >
         <option value="Gasoek One">Gasoek One</option>
         <option value="Arial Black">Arial Black</option>
@@ -365,7 +347,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </select>
 
       {/* Message Size Input */}
-      <label htmlFor="size-input-text" style={{ marginBottom: "10px" }}>
+      <label htmlFor="size-input-text" className="label">
         Choose text font size:
       </label>
       <input
@@ -373,16 +355,11 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         type="text"
         value={messageSize}
         onChange={(e) => handleInputChange(e, "messageSize", true, true)}
-        style={{
-          padding: "10px",
-          fontSize: "16px",
-          border: "1px solid #ccc",
-          borderRadius: "4px",
-        }}
+        className="input"
       />
 
       {/* Message Color */}
-      <label htmlFor="text-color" style={{ marginTop: "20px" }}>
+      <label htmlFor="text-color" className="label label-top-margin">
         Text Color:
       </label>
       <input
@@ -390,23 +367,19 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         type="color"
         value={messageColor}
         onChange={(e) => handleInputChange(e, "messageColor", false, true)}
-        style={{
-          width: "100%",
-          padding: "5px",
-          border: "none",
-          borderRadius: "4px",
-          cursor: "pointer",
-        }}
+        className="color-input"
       />
 
       {/* Image Controls */}
-      <button onClick={handleFlip} style={{ marginTop: "20px" }}>
+      <button onClick={handleFlip} className="button button-top-margin">
         Flip Image
       </button>
-      <button onClick={handleReset}>Reset Image</button>
+      <button onClick={handleReset} className="button">
+        Reset Image
+      </button>
 
-      {/*Export to PDF Button */}
-      <button onClick={exportToPDF} style={{ marginTop: "20px" }}>
+      {/* Export to PDF Button */}
+      <button onClick={exportToPDF} className="button button-top-margin">
         Export to PDF
       </button>
     </div>

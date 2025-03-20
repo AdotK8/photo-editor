@@ -1,5 +1,6 @@
 import React from "react";
 import { CustomImageData } from "../App";
+import "../styles/ImagePanel.scss";
 
 interface ImagePanelProps {
   images: CustomImageData[];
@@ -28,7 +29,6 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
         const img = new Image();
         img.src = reader.result as string;
         img.onload = () => {
-          // Calculate height maintaining aspect ratio
           const aspectRatio = img.naturalHeight / img.naturalWidth;
           const fixedWidth = 200;
           const calculatedHeight = fixedWidth * aspectRatio;
@@ -38,8 +38,8 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
             {
               id: prevImages.length + 1,
               image: img,
-              x: canvasSize / 2 - fixedWidth / 2, // Center the image
-              y: canvasSize / 2 - calculatedHeight / 2, // Center the image
+              x: canvasSize / 2 - fixedWidth / 2,
+              y: canvasSize / 2 - calculatedHeight / 2,
               width: fixedWidth,
               height: calculatedHeight,
               selected: false,
@@ -66,50 +66,19 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
     <div
       onDragOver={(event) => event.preventDefault()}
       onDrop={handleDrop}
-      style={{
-        width: "250px",
-        padding: "20px",
-        backgroundColor: "#f4f4f4",
-        borderRight: "2px solid #ddd",
-        display: "flex",
-        flexDirection: "column",
-        height: "100vh",
-        textAlign: "center",
-        alignItems: "center",
-        border: "2px dashed #bbb",
-      }}
+      className="image-panel"
     >
-      <h3 style={{ marginBottom: "10px" }}>Images</h3>
-      <div
-        style={{
-          width: "100%",
-          maxHeight: "150px",
-          overflowY: "auto",
-          display: "flex",
-          flexWrap: "wrap",
-          gap: "5px",
-          justifyContent: "center",
-          padding: "10px",
-          backgroundColor: "#fff",
-          border: "1px solid #ddd",
-          borderRadius: "5px",
-        }}
-      >
+      <h3 className="image-panel-title">Images</h3>
+      <div className="image-container">
         {images.map((img) => (
-          <div key={img.id} style={{ position: "relative" }}>
+          <div key={img.id} className="image-wrapper">
             <img
               src={img.image.src}
               alt={`Uploaded ${img.id}`}
               onClick={() => handleSelectImage(img.id)}
-              style={{
-                width: "50px",
-                height: "50px",
-                objectFit: "cover",
-                borderRadius: "5px",
-                border: img.selected ? "3px solid blue" : "1px solid #ccc",
-                cursor: "pointer",
-                transform: img.flipped ? "scaleX(-1)" : "scaleX(1)",
-              }}
+              className={`thumbnail ${img.selected ? "selected" : ""} ${
+                img.flipped ? "flipped" : ""
+              }`}
             />
             {img.selected && (
               <button
@@ -117,18 +86,7 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
                   e.stopPropagation();
                   handleDeleteImage(img.id);
                 }}
-                style={{
-                  position: "absolute",
-                  top: "5px",
-                  right: "5px",
-                  background: "rgba(255, 255, 255, 0.7)",
-                  border: "none",
-                  borderRadius: "50%",
-                  padding: "5px",
-                  cursor: "pointer",
-                  fontSize: "14px",
-                  color: "red",
-                }}
+                className="delete-button"
               >
                 X
               </button>
@@ -136,7 +94,7 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
           </div>
         ))}
       </div>
-      <p style={{ marginTop: "10px", flexGrow: 1 }}>Drag & Drop Images Here</p>
+      <p className="drop-text">Drag & Drop Images Here</p>
     </div>
   );
 };

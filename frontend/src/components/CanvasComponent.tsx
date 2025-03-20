@@ -199,20 +199,14 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   return (
     <div
       tabIndex={0}
-      style={{
-        width: `${canvasSize}px`,
-        height: `${canvasSize}px`,
-        margin: "0 auto",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
+      className="canvas-container"
+      style={{ "--canvas-size": `${canvasSize}px` } as React.CSSProperties}
     >
       <Stage
         ref={stageRef}
         width={canvasSize}
         height={canvasSize}
-        style={{ backgroundColor: "white", border: "4px solid black" }}
+        className="canvas-stage"
       >
         <Layer>
           <Rect
