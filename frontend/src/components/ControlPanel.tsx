@@ -125,62 +125,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateMessageDetails("messageFont", value);
   };
 
-  const handleFlip = () => {
-    setImages((prevImages) =>
-      prevImages.map((img) => {
-        if (!img.selected) return img;
-
-        const node = imageRefs.current[img.id];
-        if (!node) return img;
-
-        const currentScaleX = img.scaleX ?? 1;
-        const newScaleX = -currentScaleX;
-        const flippedStatus = !img.flipped;
-
-        const baseWidth = node.getClientRect().width;
-        const shift = baseWidth / 2;
-        const newX = flippedStatus ? node.x() + shift : node.x() - shift;
-
-        node.scaleX(newScaleX);
-        node.x(newX);
-        node.getLayer()?.batchDraw();
-
-        return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
-      })
-    );
-  };
-
-  const handleReset = () => {
-    setImages((prevImages) =>
-      prevImages.map((img) => {
-        if (!img.selected) return img;
-
-        const node = imageRefs.current[img.id];
-        if (!node) return img;
-
-        node.rotation(0);
-
-        const originalWidth = 200;
-        const originalHeight = img.height;
-        const newX = canvasSize / 2 - originalWidth / 2;
-        const newY = canvasSize / 2 - originalHeight / 2;
-
-        node.scaleX(1);
-        node.scaleY(1);
-
-        return {
-          ...img,
-          x: newX,
-          y: newY,
-          width: originalWidth,
-          height: originalHeight,
-          scaleX: 1,
-          flipped: false,
-        };
-      })
-    );
-  };
-
   const exportToPDF = () => {
     if (!stageRef.current) return;
 
@@ -371,14 +315,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         onChange={(e) => handleInputChange(e, "messageColor", false, true)}
         className="color-input"
       />
-
-      {/* Image Controls */}
-      <button onClick={handleFlip} className="button button-top-margin">
-        Flip Image
-      </button>
-      <button onClick={handleReset} className="button">
-        Reset Image
-      </button>
 
       {/* Export to PDF Button */}
       <button onClick={exportToPDF} className="button button-top-margin">

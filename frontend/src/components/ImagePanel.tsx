@@ -1,17 +1,20 @@
 import React from "react";
 import { CustomImageData } from "../App";
+import Konva from "konva";
 import "../styles/ImagePanel.scss";
 
 interface ImagePanelProps {
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
   canvasSize: number;
+  imageRefs: React.MutableRefObject<{ [key: number]: Konva.Image | null }>;
 }
 
 const ImagePanel: React.FC<ImagePanelProps> = ({
   images,
   setImages,
   canvasSize,
+  imageRefs,
 }) => {
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
@@ -62,6 +65,62 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
     setImages((prevImages) => prevImages.filter((img) => img.id !== id));
   };
 
+  const handleFlipImage = (id: number) => {
+    setImages((prevImages) =>
+      prevImages.map((img) => {
+        if (img.id !== id) return img;
+
+        const node = imageRefs.current[img.id];
+        if (!node) return img;
+
+        const currentScaleX = img.scaleX ?? 1;
+        const newScaleX = -currentScaleX;
+        const flippedStatus = !img.flipped;
+
+        const baseWidth = node.getClientRect().width;
+        const shift = baseWidth / 2;
+        const newX = flippedStatus ? node.x() + shift : node.x() - shift;
+
+        node.scaleX(newScaleX);
+        node.x(newX);
+        node.getLayer()?.batchDraw();
+
+        return { ...img, scaleX: newScaleX, flipped: flippedStatus, x: newX };
+      })
+    );
+  };
+
+  const handleResetImage = (id: number) => {
+    setImages((prevImages) =>
+      prevImages.map((img) => {
+        if (img.id !== id) return img;
+
+        const node = imageRefs.current[img.id];
+        if (!node) return img;
+
+        node.rotation(0);
+
+        const originalWidth = 200;
+        const originalHeight = img.height;
+        const newX = canvasSize / 2 - originalWidth / 2;
+        const newY = canvasSize / 2 - originalHeight / 2;
+
+        node.scaleX(1);
+        node.scaleY(1);
+
+        return {
+          ...img,
+          x: newX,
+          y: newY,
+          width: originalWidth,
+          height: originalHeight,
+          scaleX: 1,
+          flipped: false,
+        };
+      })
+    );
+  };
+
   return (
     <div
       onDragOver={(event) => event.preventDefault()}
@@ -81,15 +140,35 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
               }`}
             />
             {img.selected && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleDeleteImage(img.id);
-                }}
-                className="delete-button"
-              >
-                X
-              </button>
+              <>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteImage(img.id);
+                  }}
+                  className="delete-button"
+                >
+                  X
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleFlipImage(img.id);
+                  }}
+                  className="flip-button"
+                >
+                  ⇆
+                </button>
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleResetImage(img.id);
+                  }}
+                  className="reset-button"
+                >
+                  ↺
+                </button>
+              </>
             )}
           </div>
         ))}

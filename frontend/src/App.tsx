@@ -92,7 +92,6 @@ function App() {
 
   return (
     <div className="app-container">
-      {/* Control Panel */}
       <ControlPanel
         selectedNumber={numberDetails.selectedNumber}
         numberFont={numberDetails.numberFont}
@@ -117,7 +116,6 @@ function App() {
         canvasSize={canvasSize}
       />
 
-      {/* Canvas */}
       <div className="canvas-wrapper">
         <CanvasComponent
           selectedNumber={numberDetails.selectedNumber}
@@ -143,11 +141,11 @@ function App() {
         />
       </div>
 
-      {/* Image Panel */}
       <ImagePanel
         images={images}
         setImages={setImages}
         canvasSize={canvasSize}
+        imageRefs={imageRefs}
       />
     </div>
   );

@@ -63,6 +63,32 @@
   color: red;
 }
 
+.flip-button {
+  position: absolute;
+  top: 5px;
+  left: 5px; // Top-left corner
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #000;
+}
+
+.reset-button {
+  position: absolute;
+  bottom: 5px;
+  right: 5px; // Bottom-right corner
+  background: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 50%;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #000;
+}
+
 .drop-text {
   margin-top: 10px;
   flex-grow: 1;
