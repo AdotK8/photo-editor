@@ -1,8 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import Konva from "konva";
 import { CustomImageData } from "../App";
 import { jsPDF } from "jspdf";
 import "../styles/ControlPanel.scss";
+
+// Import icons
+import leftIcon from "../images/left.svg";
+import rightIcon from "../images/right.svg";
+import upIcon from "../images/up.svg";
+import downIcon from "../images/down.svg";
+import rotateLeftIcon from "../images/rotate-left.svg";
+import rotateRightIcon from "../images/rotate-right.svg";
+import exportIcon from "../images/export.svg";
 
 interface ControlPanelProps {
   selectedNumber: string | number;
@@ -51,6 +60,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   stageRef,
   canvasSize,
 }) => {
+  const [moveTarget, setMoveTarget] = useState<"number" | "message">("number");
+
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
     key: string,
@@ -64,39 +75,40 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     updateFn(key, value === "" ? "" : isNumber ? parseInt(value) : value);
   };
 
-  const handleMove = (
-    direction: "left" | "right" | "up" | "down",
-    isText: boolean = false
-  ) => {
-    const updateFn = isText ? updateMessageDetails : updateNumberDetails;
+  const handleMove = (direction: "left" | "right" | "up" | "down") => {
+    const updateFn =
+      moveTarget === "message" ? updateMessageDetails : updateNumberDetails;
     const step = 10;
 
     const updates: { [key: string]: { key: string; value: number } } = {
-      left: isText
-        ? { key: "messageOffsetX", value: messageOffsetX - step }
-        : { key: "numberOffsetX", value: numberOffsetX + step },
-      right: isText
-        ? { key: "messageOffsetX", value: messageOffsetX + step }
-        : { key: "numberOffsetX", value: numberOffsetX - step },
-      up: isText
-        ? { key: "messageOffsetY", value: messageOffsetY - step }
-        : { key: "numberOffsetY", value: numberOffsetY + step },
-      down: isText
-        ? { key: "messageOffsetY", value: messageOffsetY + step }
-        : { key: "numberOffsetY", value: numberOffsetY - step },
+      left:
+        moveTarget === "message"
+          ? { key: "messageOffsetX", value: messageOffsetX - step }
+          : { key: "numberOffsetX", value: numberOffsetX + step },
+      right:
+        moveTarget === "message"
+          ? { key: "messageOffsetX", value: messageOffsetX + step }
+          : { key: "numberOffsetX", value: numberOffsetX - step },
+      up:
+        moveTarget === "message"
+          ? { key: "messageOffsetY", value: messageOffsetY - step }
+          : { key: "numberOffsetY", value: numberOffsetY + step },
+      down:
+        moveTarget === "message"
+          ? { key: "messageOffsetY", value: messageOffsetY + step }
+          : { key: "numberOffsetY", value: numberOffsetY - step },
     };
 
     const { key, value } = updates[direction];
     updateFn(key, value);
   };
 
-  const handleRotate = (
-    direction: "left" | "right",
-    isText: boolean = false
-  ) => {
-    const updateFn = isText ? updateMessageDetails : updateNumberDetails;
-    const key = isText ? "messageRotation" : "numberRotation";
-    const currentValue = isText ? messageRotation : numberRotation;
+  const handleRotate = (direction: "left" | "right") => {
+    const updateFn =
+      moveTarget === "message" ? updateMessageDetails : updateNumberDetails;
+    const key = moveTarget === "message" ? "messageRotation" : "numberRotation";
+    const currentValue =
+      moveTarget === "message" ? messageRotation : numberRotation;
     const value = direction === "left" ? currentValue + 1 : currentValue - 1;
     updateFn(key, value);
   };
@@ -153,6 +165,52 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     <div className="control-panel">
       <h3>Control Panel</h3>
 
+      {/* Toggle between Number and Message */}
+      <div className="move-target-toggle">
+        <label>
+          <input
+            type="radio"
+            name="move-target"
+            value="number"
+            checked={moveTarget === "number"}
+            onChange={() => setMoveTarget("number")}
+          />
+          Number
+        </label>
+        <label>
+          <input
+            type="radio"
+            name="move-target"
+            value="message"
+            checked={moveTarget === "message"}
+            onChange={() => setMoveTarget("message")}
+          />
+          Message
+        </label>
+      </div>
+
+      {/* Movement Controls with Icons */}
+      <div className="movement-controls">
+        <button onClick={() => handleMove("left")} className="icon-button">
+          <img src={leftIcon} alt="Move Left" />
+        </button>
+        <button onClick={() => handleMove("right")} className="icon-button">
+          <img src={rightIcon} alt="Move Right" />
+        </button>
+        <button onClick={() => handleMove("up")} className="icon-button">
+          <img src={upIcon} alt="Move Up" />
+        </button>
+        <button onClick={() => handleMove("down")} className="icon-button">
+          <img src={downIcon} alt="Move Down" />
+        </button>
+        <button onClick={() => handleRotate("left")} className="icon-button">
+          <img src={rotateLeftIcon} alt="Rotate Left" />
+        </button>
+        <button onClick={() => handleRotate("right")} className="icon-button">
+          <img src={rotateRightIcon} alt="Rotate Right" />
+        </button>
+      </div>
+
       {/* Number Input */}
       <label htmlFor="number-input" className="label">
         Choose a number:
@@ -192,41 +250,6 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         <option value="Coiny-Regular.ttf">Coiny</option>
       </select>
 
-      {/* Message Input */}
-      <label htmlFor="message-input" className="label label-top-margin">
-        Enter text phrase:
-      </label>
-      <input
-        id="message-input"
-        type="text"
-        value={messageContents}
-        onChange={(e) => handleInputChange(e, "messageContents", false, true)}
-        className="input input-bottom-margin"
-      />
-
-      {/* Number Movement Controls */}
-      <button onClick={() => handleMove("left")} className="button">
-        Move Left
-      </button>
-      <button onClick={() => handleMove("right")} className="button">
-        Move Right
-      </button>
-      <button onClick={() => handleMove("up")} className="button">
-        Move Up
-      </button>
-      <button onClick={() => handleMove("down")} className="button">
-        Move Down
-      </button>
-      <button onClick={() => handleRotate("left")} className="button">
-        Rotate Left
-      </button>
-      <button onClick={() => handleRotate("right")} className="button">
-        Rotate Right
-      </button>
-      <button onClick={resetNumber} className="button">
-        Reset
-      </button>
-
       {/* Stroke Width */}
       <label htmlFor="stroke-width" className="label label-top-margin">
         Stroke Width:
@@ -255,30 +278,22 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         className="color-input"
       />
 
-      {/* Message Controls */}
-      <button onClick={() => handleMove("left", true)} className="button">
-        Move Left (Text)
-      </button>
-      <button onClick={() => handleMove("right", true)} className="button">
-        Move Right (Text)
-      </button>
-      <button onClick={() => handleMove("up", true)} className="button">
-        Move Up (Text)
-      </button>
-      <button onClick={() => handleMove("down", true)} className="button">
-        Move Down (Text)
-      </button>
-      <button onClick={() => handleRotate("left", true)} className="button">
-        Rotate Left (Text)
-      </button>
-      <button onClick={() => handleRotate("right", true)} className="button">
-        Rotate Right (Text)
-      </button>
-      <button onClick={resetText} className="button">
-        Reset Text
-      </button>
+      {/* Message Input */}
+      <label htmlFor="message-input" className="label label-top-margin">
+        Enter text phrase:
+      </label>
+      <input
+        id="message-input"
+        type="text"
+        value={messageContents}
+        onChange={(e) => handleInputChange(e, "messageContents", false, true)}
+        className="input input-bottom-margin"
+      />
 
       {/* Message Font Selector */}
+      <label htmlFor="font-selector-text" className="label label-top-margin">
+        Choose text font:
+      </label>
       <select
         id="font-selector-text"
         value={messageFont}
@@ -293,7 +308,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </select>
 
       {/* Message Size Input */}
-      <label htmlFor="size-input-text" className="label">
+      <label htmlFor="size-input-text" className="label label-top-margin">
         Choose text font size:
       </label>
       <input
@@ -316,8 +331,22 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         className="color-input"
       />
 
+      {/* Reset Buttons */}
+      <div className="reset-buttons">
+        <button onClick={resetNumber} className="button">
+          Reset Number
+        </button>
+        <button onClick={resetText} className="button">
+          Reset Text
+        </button>
+      </div>
+
       {/* Export to PDF Button */}
-      <button onClick={exportToPDF} className="button button-top-margin">
+      <button
+        onClick={exportToPDF}
+        className="button button-top-margin export-button"
+      >
+        <img src={exportIcon} alt="Export to PDF" />
         Export to PDF
       </button>
     </div>

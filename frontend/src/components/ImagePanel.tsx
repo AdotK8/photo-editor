@@ -3,6 +3,11 @@ import { CustomImageData } from "../App";
 import Konva from "konva";
 import "../styles/ImagePanel.scss";
 
+// Import icons
+import binIcon from "../images/bin.svg";
+import flipIcon from "../images/flip.svg";
+import resetIcon from "../images/reset.svg";
+
 interface ImagePanelProps {
   images: CustomImageData[];
   setImages: React.Dispatch<React.SetStateAction<CustomImageData[]>>;
@@ -16,6 +21,9 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
   canvasSize,
   imageRefs,
 }) => {
+  // Find the currently selected image (if any)
+  const selectedImage = images.find((img) => img.selected);
+
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
     event.preventDefault();
     const files = event.dataTransfer.files;
@@ -56,19 +64,23 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
   };
 
   const handleSelectImage = (id: number) => {
-    setImages((prev: any) =>
-      prev.map((img: any) => ({ ...img, selected: img.id === id }))
+    setImages((prev) =>
+      prev.map((img) => ({ ...img, selected: img.id === id }))
     );
   };
 
-  const handleDeleteImage = (id: number) => {
-    setImages((prevImages) => prevImages.filter((img) => img.id !== id));
+  const handleDeleteImage = () => {
+    if (!selectedImage) return;
+    setImages((prevImages) =>
+      prevImages.filter((img) => img.id !== selectedImage.id)
+    );
   };
 
-  const handleFlipImage = (id: number) => {
+  const handleFlipImage = () => {
+    if (!selectedImage) return;
     setImages((prevImages) =>
       prevImages.map((img) => {
-        if (img.id !== id) return img;
+        if (img.id !== selectedImage.id) return img;
 
         const node = imageRefs.current[img.id];
         if (!node) return img;
@@ -90,10 +102,11 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
     );
   };
 
-  const handleResetImage = (id: number) => {
+  const handleResetImage = () => {
+    if (!selectedImage) return;
     setImages((prevImages) =>
       prevImages.map((img) => {
-        if (img.id !== id) return img;
+        if (img.id !== selectedImage.id) return img;
 
         const node = imageRefs.current[img.id];
         if (!node) return img;
@@ -128,6 +141,32 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
       className="image-panel"
     >
       <h3 className="image-panel-title">Images</h3>
+
+      {/* New container for the action buttons */}
+      <div className="action-buttons">
+        <button
+          onClick={handleFlipImage}
+          className="action-button flip-button"
+          disabled={!selectedImage}
+        >
+          <img src={flipIcon} alt="Flip" />
+        </button>
+        <button
+          onClick={handleDeleteImage}
+          className="action-button delete-button"
+          disabled={!selectedImage}
+        >
+          <img src={binIcon} alt="Delete" />
+        </button>
+        <button
+          onClick={handleResetImage}
+          className="action-button reset-button"
+          disabled={!selectedImage}
+        >
+          <img src={resetIcon} alt="Reset" />
+        </button>
+      </div>
+
       <div className="image-container">
         {images.map((img) => (
           <div key={img.id} className="image-wrapper">
@@ -139,37 +178,6 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
                 img.flipped ? "flipped" : ""
               }`}
             />
-            {img.selected && (
-              <>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteImage(img.id);
-                  }}
-                  className="delete-button"
-                >
-                  X
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleFlipImage(img.id);
-                  }}
-                  className="flip-button"
-                >
-                  ⇆
-                </button>
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleResetImage(img.id);
-                  }}
-                  className="reset-button"
-                >
-                  ↺
-                </button>
-              </>
-            )}
           </div>
         ))}
       </div>

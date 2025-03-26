@@ -1,48 +1,84 @@
 .image-panel {
-  width: 250px;
+  width: 100%;
   padding: 20px;
-  background-color: #f4f4f4;
-  border-right: 2px solid #ddd;
+  background-color: #ffffff;
+  border-top: 1px solid #e0e0e0;
   display: flex;
   flex-direction: column;
-  height: 100vh;
   text-align: center;
   align-items: center;
-  border: 2px dashed #bbb;
+  overflow-y: auto;
+  box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+
+  h3 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+  }
 }
 
-.image-panel-title {
-  margin-bottom: 10px;
+.action-buttons {
+  display: flex;
+  gap: 12px; // Slightly increased gap for better spacing with larger buttons
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.action-button {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #e0e0e0; // Added border
+  border-radius: 50%;
+  padding: 10px; // Increased padding to accommodate larger icons
+  cursor: pointer;
+  transition: background-color 0.2s, opacity 0.2s, border-color 0.2s,
+    filter 0.2s;
+
+  img {
+    width: 20px; // Increased icon size from 16px to 20px
+    height: 20px;
+  }
+
+  &:hover:not(:disabled) {
+    background: rgba(200, 200, 200, 0.9);
+    border-color: #4a90e2; // Blue border on hover when enabled
+  }
+
+  &:disabled {
+    opacity: 0.3; // Reduced opacity from 0.5 to 0.3 for a more prominent grayed-out effect
+    filter: grayscale(100%); // Added grayscale filter for disabled state
+    cursor: not-allowed;
+  }
 }
 
 .image-container {
   width: 100%;
-  max-height: 150px;
-  overflow-y: auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 10px;
   justify-content: center;
   padding: 10px;
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 5px;
+  background-color: #f9f9f9;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  flex-grow: 1;
 }
 
 .image-wrapper {
-  position: relative;
+  display: inline-block; // Ensure the wrapper tightly wraps the thumbnail
 }
 
 .thumbnail {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   object-fit: cover;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
   cursor: pointer;
+  transition: border-color 0.2s;
 
   &.selected {
-    border: 3px solid blue;
+    border: 2px solid #4a90e2;
   }
 
   &.flipped {
@@ -50,46 +86,8 @@
   }
 }
 
-.delete-button {
-  position: absolute;
-  top: 5px;
-  right: 5px;
-  background: rgba(255, 255, 255, 0.7);
-  border: none;
-  border-radius: 50%;
-  padding: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  color: red;
-}
-
-.flip-button {
-  position: absolute;
-  top: 5px;
-  left: 5px; // Top-left corner
-  background: rgba(255, 255, 255, 0.7);
-  border: none;
-  border-radius: 50%;
-  padding: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #000;
-}
-
-.reset-button {
-  position: absolute;
-  bottom: 5px;
-  right: 5px; // Bottom-right corner
-  background: rgba(255, 255, 255, 0.7);
-  border: none;
-  border-radius: 50%;
-  padding: 5px;
-  cursor: pointer;
-  font-size: 14px;
-  color: #000;
-}
-
 .drop-text {
-  margin-top: 10px;
-  flex-grow: 1;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #777;
 }
