@@ -21,7 +21,6 @@ const ImagePanel: React.FC<ImagePanelProps> = ({
   canvasSize,
   imageRefs,
 }) => {
-  // Find the currently selected image (if any)
   const selectedImage = images.find((img) => img.selected);
 
   const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {

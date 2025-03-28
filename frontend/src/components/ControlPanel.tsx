@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import Konva from "konva";
 import { CustomImageData } from "../App";
 import { jsPDF } from "jspdf";
@@ -61,6 +61,8 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
   canvasSize,
 }) => {
   const [moveTarget, setMoveTarget] = useState<"number" | "message">("number");
+  const numberColorInputRef = useRef<HTMLInputElement>(null);
+  const messageColorInputRef = useRef<HTMLInputElement>(null);
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
@@ -161,175 +163,211 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
     }, 100);
   };
 
+  const handleColorButtonClick = (ref: React.RefObject<HTMLInputElement>) => {
+    ref.current?.click();
+  };
+
   return (
     <div className="control-panel">
       <h3>Control Panel</h3>
 
-      {/* Toggle between Number and Message */}
+      {/* Toggle Switch for Number/Message */}
       <div className="move-target-toggle">
-        <label>
+        <span className={moveTarget === "number" ? "active" : ""}>Number</span>
+        <label className="switch">
           <input
-            type="radio"
-            name="move-target"
-            value="number"
-            checked={moveTarget === "number"}
-            onChange={() => setMoveTarget("number")}
-          />
-          Number
-        </label>
-        <label>
-          <input
-            type="radio"
-            name="move-target"
-            value="message"
+            type="checkbox"
             checked={moveTarget === "message"}
-            onChange={() => setMoveTarget("message")}
+            onChange={() =>
+              setMoveTarget(moveTarget === "number" ? "message" : "number")
+            }
           />
-          Message
+          <span className="slider"></span>
         </label>
+        <span className={moveTarget === "message" ? "active" : ""}>
+          Message
+        </span>
       </div>
 
-      {/* Movement Controls with Icons */}
+      {/* Movement Controls */}
       <div className="movement-controls">
-        <button onClick={() => handleMove("left")} className="icon-button">
-          <img src={leftIcon} alt="Move Left" />
-        </button>
-        <button onClick={() => handleMove("right")} className="icon-button">
-          <img src={rightIcon} alt="Move Right" />
-        </button>
-        <button onClick={() => handleMove("up")} className="icon-button">
+        <button onClick={() => handleMove("up")} className="icon-button up">
           <img src={upIcon} alt="Move Up" />
         </button>
-        <button onClick={() => handleMove("down")} className="icon-button">
-          <img src={downIcon} alt="Move Down" />
-        </button>
-        <button onClick={() => handleRotate("left")} className="icon-button">
-          <img src={rotateLeftIcon} alt="Rotate Left" />
-        </button>
-        <button onClick={() => handleRotate("right")} className="icon-button">
-          <img src={rotateRightIcon} alt="Rotate Right" />
-        </button>
+        <div className="horizontal-controls">
+          <button
+            onClick={() => handleMove("left")}
+            className="icon-button left"
+          >
+            <img src={leftIcon} alt="Move Left" />
+          </button>
+          <button
+            onClick={() => handleMove("down")}
+            className="icon-button down"
+          >
+            <img src={downIcon} alt="Move Down" />
+          </button>
+          <button
+            onClick={() => handleMove("right")}
+            className="icon-button right"
+          >
+            <img src={rightIcon} alt="Move Right" />
+          </button>
+        </div>
+        <div className="rotate-controls">
+          <button
+            onClick={() => handleRotate("left")}
+            className="icon-button rotate-left"
+          >
+            <img src={rotateLeftIcon} alt="Rotate Left" />
+          </button>
+          <button
+            onClick={() => handleRotate("right")}
+            className="icon-button rotate-right"
+          >
+            <img src={rotateRightIcon} alt="Rotate Right" />
+          </button>
+        </div>
       </div>
 
-      {/* Number Input */}
-      <label htmlFor="number-input" className="label">
-        Choose a number:
-      </label>
-      <input
-        id="number-input"
-        type="text"
-        value={selectedNumber}
-        onChange={(e) => handleInputChange(e, "selectedNumber", true)}
-        className="input"
-      />
+      {/* Number Settings Section */}
+      <div className="settings-section">
+        <div className="inline-group">
+          <div className="field">
+            <label htmlFor="number-input" className="label">
+              Choose a number:
+            </label>
+            <input
+              id="number-input"
+              type="text"
+              value={selectedNumber}
+              onChange={(e) => handleInputChange(e, "selectedNumber", true)}
+              className="input"
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="size-input" className="label">
+              Font size:
+            </label>
+            <input
+              id="size-input"
+              type="text"
+              value={numberSize}
+              onChange={(e) => handleInputChange(e, "numberSize", true)}
+              className="input"
+            />
+          </div>
+        </div>
 
-      {/* Number Size Input */}
-      <label htmlFor="size-input" className="label">
-        Choose font size:
-      </label>
-      <input
-        id="size-input"
-        type="text"
-        value={numberSize}
-        onChange={(e) => handleInputChange(e, "numberSize", true)}
-        className="input"
-      />
+        <label htmlFor="font-selector" className="label">
+          Choose a font:
+        </label>
+        <select
+          id="font-selector"
+          value={numberFont}
+          onChange={(e) => handleInputChange(e, "numberFont")}
+          className="select"
+        >
+          <option value="GasoekOne.ttf">Gasoek One</option>
+          <option value="arial_black.ttf">Arial Black</option>
+          <option value="Coiny-Regular.ttf">Coiny</option>
+        </select>
 
-      {/* Number Font Selector */}
-      <label htmlFor="font-selector" className="label label-top-margin">
-        Choose a font:
-      </label>
-      <select
-        id="font-selector"
-        value={numberFont}
-        onChange={(e) => handleInputChange(e, "numberFont")}
-        className="select"
-      >
-        <option value="GasoekOne.ttf">Gasoek One</option>
-        <option value="arial_black.ttf">Arial Black</option>
-        <option value="Coiny-Regular.ttf">Coiny</option>
-      </select>
+        <label htmlFor="stroke-width" className="label">
+          Stroke Width:
+        </label>
+        <input
+          id="stroke-width"
+          type="range"
+          min="0"
+          max="10"
+          value={strokeWidth}
+          onChange={(e) =>
+            updateNumberDetails("strokeWidth", parseInt(e.target.value))
+          }
+          className="range-input"
+        />
+      </div>
 
-      {/* Stroke Width */}
-      <label htmlFor="stroke-width" className="label label-top-margin">
-        Stroke Width:
-      </label>
-      <input
-        id="stroke-width"
-        type="range"
-        min="0"
-        max="10"
-        value={strokeWidth}
-        onChange={(e) =>
-          updateNumberDetails("strokeWidth", parseInt(e.target.value))
-        }
-        className="range-input"
-      />
+      {/* Message Settings Section */}
+      <div className="settings-section">
+        <label htmlFor="message-input" className="label">
+          Enter text phrase:
+        </label>
+        <input
+          id="message-input"
+          type="text"
+          value={messageContents}
+          onChange={(e) => handleInputChange(e, "messageContents", false, true)}
+          className="input full-width"
+        />
 
-      {/* Number Color */}
-      <label htmlFor="number-color" className="label label-top-margin">
-        Border Color:
-      </label>
-      <input
-        id="number-color"
-        type="color"
-        value={numberColor}
-        onChange={(e) => handleInputChange(e, "numberColor", false, false)}
-        className="color-input"
-      />
+        <div className="inline-group">
+          <div className="field">
+            <label htmlFor="size-input-text" className="label">
+              Font size:
+            </label>
+            <input
+              id="size-input-text"
+              type="text"
+              value={messageSize}
+              onChange={(e) => handleInputChange(e, "messageSize", true, true)}
+              className="input"
+            />
+          </div>
+          <div className="field">
+            <label htmlFor="font-selector-text" className="label">
+              Choose font:
+            </label>
+            <select
+              id="font-selector-text"
+              value={messageFont}
+              onChange={handleFontChangeText}
+              className="select"
+            >
+              <option value="Gasoek One">Gasoek One</option>
+              <option value="Arial Black">Arial Black</option>
+              <option value="Coiny">Coiny</option>
+              <option value="Monsieur La Doulaise">Monsieur La Doulaise</option>
+              <option value="Imperial Script">Imperial Script</option>
+            </select>
+          </div>
+        </div>
+      </div>
 
-      {/* Message Input */}
-      <label htmlFor="message-input" className="label label-top-margin">
-        Enter text phrase:
-      </label>
-      <input
-        id="message-input"
-        type="text"
-        value={messageContents}
-        onChange={(e) => handleInputChange(e, "messageContents", false, true)}
-        className="input input-bottom-margin"
-      />
-
-      {/* Message Font Selector */}
-      <label htmlFor="font-selector-text" className="label label-top-margin">
-        Choose text font:
-      </label>
-      <select
-        id="font-selector-text"
-        value={messageFont}
-        onChange={handleFontChangeText}
-        className="select"
-      >
-        <option value="Gasoek One">Gasoek One</option>
-        <option value="Arial Black">Arial Black</option>
-        <option value="Coiny">Coiny</option>
-        <option value="Monsieur La Doulaise">Monsieur La Doulaise</option>
-        <option value="Imperial Script">Imperial Script</option>
-      </select>
-
-      {/* Message Size Input */}
-      <label htmlFor="size-input-text" className="label label-top-margin">
-        Choose text font size:
-      </label>
-      <input
-        id="size-input-text"
-        type="text"
-        value={messageSize}
-        onChange={(e) => handleInputChange(e, "messageSize", true, true)}
-        className="input"
-      />
-
-      {/* Message Color */}
-      <label htmlFor="text-color" className="label label-top-margin">
-        Text Color:
-      </label>
-      <input
-        id="text-color"
-        type="color"
-        value={messageColor}
-        onChange={(e) => handleInputChange(e, "messageColor", false, true)}
-        className="color-input"
-      />
+      {/* Color Selectors Section */}
+      <div className="color-selectors">
+        <div className="color-selector">
+          <label className="label">Border Color:</label>
+          <button
+            className="color-button"
+            style={{ backgroundColor: numberColor }}
+            onClick={() => handleColorButtonClick(numberColorInputRef)}
+          />
+          <input
+            ref={numberColorInputRef}
+            type="color"
+            value={numberColor}
+            onChange={(e) => handleInputChange(e, "numberColor", false, false)}
+            className="hidden-color-input"
+          />
+        </div>
+        <div className="color-selector">
+          <label className="label">Text Color:</label>
+          <button
+            className="color-button"
+            style={{ backgroundColor: messageColor }}
+            onClick={() => handleColorButtonClick(messageColorInputRef)}
+          />
+          <input
+            ref={messageColorInputRef}
+            type="color"
+            value={messageColor}
+            onChange={(e) => handleInputChange(e, "messageColor", false, true)}
+            className="hidden-color-input"
+          />
+        </div>
+      </div>
 
       {/* Reset Buttons */}
       <div className="reset-buttons">
@@ -342,10 +380,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
       </div>
 
       {/* Export to PDF Button */}
-      <button
-        onClick={exportToPDF}
-        className="button button-top-margin export-button"
-      >
+      <button onClick={exportToPDF} className="button export-button">
         <img src={exportIcon} alt="Export to PDF" />
         Export to PDF
       </button>

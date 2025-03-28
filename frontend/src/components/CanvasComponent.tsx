@@ -66,6 +66,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   const [textPath, setTextPath] = useState<string>("");
   const [pathBBox, setPathBBox] = useState<BBox | null>(null);
   const [fontLoaded, setFontLoaded] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const outlineLayerRef = useRef<Konva.Layer>(null);
   const textRef = useRef<Konva.Text | null>(null);
   const transformerRefs = useRef<{ [key: number]: Konva.Transformer | null }>(
@@ -199,8 +200,10 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   return (
     <div
       tabIndex={0}
-      className="canvas-container"
+      className={`canvas-container ${isFocused ? "focused" : ""}`}
       style={{ "--canvas-size": `${canvasSize}px` } as React.CSSProperties}
+      onFocus={() => setIsFocused(true)}
+      onBlur={() => setIsFocused(false)}
     >
       <Stage
         ref={stageRef}
