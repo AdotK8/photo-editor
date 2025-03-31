@@ -274,7 +274,7 @@ const ControlPanel: React.FC<ControlPanelProps> = ({
         </select>
 
         <label htmlFor="stroke-width" className="label">
-          Stroke Width:
+          Thickness:
         </label>
         <input
           id="stroke-width"
