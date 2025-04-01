@@ -18,7 +18,7 @@
    The right panel is the image panel which allows users to upload their own images to the application. It also allows the user to delete, flip and reset the images. 
   </li>
   <li>
-      <li>Once the user has completed the canvas they are then able to click the "Export" button which downloads the canvas a pdf.</li>
+      Once the user has completed the canvas they are then able to click the "Export" button which downloads the canvas a pdf.
   </li>
 </ul>
 
