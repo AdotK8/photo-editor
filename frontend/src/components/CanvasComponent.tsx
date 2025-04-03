@@ -74,6 +74,7 @@ const CanvasComponent: React.FC<CanvasComponentProps> = ({
   );
 
   const imagesRef = useRef(images);
+
   useEffect(() => {
     imagesRef.current = images;
   }, [images]);
