@@ -92,32 +92,12 @@ function App() {
 
   return (
     <div className="app-container">
-      <ControlPanel
-        selectedNumber={numberDetails.selectedNumber}
-        numberFont={numberDetails.numberFont}
-        numberSize={numberDetails.numberSize}
-        strokeWidth={numberDetails.strokeWidth}
-        numberOffsetX={numberDetails.numberOffsetX}
-        numberOffsetY={numberDetails.numberOffsetY}
-        numberRotation={numberDetails.numberRotation}
-        numberColor={numberDetails.numberColor}
-        messageContents={messageDetails.messageContents}
-        messageSize={messageDetails.messageSize}
-        messageFont={messageDetails.messageFont}
-        messageOffsetX={messageDetails.messageOffsetX}
-        messageOffsetY={messageDetails.messageOffsetY}
-        messageRotation={messageDetails.messageRotation}
-        messageColor={messageDetails.messageColor}
-        updateNumberDetails={updateNumberDetails}
-        updateMessageDetails={updateMessageDetails}
-        setImages={setImages}
-        imageRefs={imageRefs}
-        stageRef={stageRef}
-        canvasSize={canvasSize}
-      />
-
-      <div className="canvas-wrapper">
-        <CanvasComponent
+      <div className="desktop-only-message">
+        This app is designed for desktop use only. Please open it on a desktop
+        browser.
+      </div>
+      <div className="app-content">
+        <ControlPanel
           selectedNumber={numberDetails.selectedNumber}
           numberFont={numberDetails.numberFont}
           numberSize={numberDetails.numberSize}
@@ -133,20 +113,44 @@ function App() {
           messageOffsetY={messageDetails.messageOffsetY}
           messageRotation={messageDetails.messageRotation}
           messageColor={messageDetails.messageColor}
-          images={images}
+          updateNumberDetails={updateNumberDetails}
+          updateMessageDetails={updateMessageDetails}
           setImages={setImages}
           imageRefs={imageRefs}
           stageRef={stageRef}
           canvasSize={canvasSize}
         />
+        <div className="canvas-wrapper">
+          <CanvasComponent
+            selectedNumber={numberDetails.selectedNumber}
+            numberFont={numberDetails.numberFont}
+            numberSize={numberDetails.numberSize}
+            strokeWidth={numberDetails.strokeWidth}
+            numberOffsetX={numberDetails.numberOffsetX}
+            numberOffsetY={numberDetails.numberOffsetY}
+            numberRotation={numberDetails.numberRotation}
+            numberColor={numberDetails.numberColor}
+            messageContents={messageDetails.messageContents}
+            messageSize={messageDetails.messageSize}
+            messageFont={messageDetails.messageFont}
+            messageOffsetX={messageDetails.messageOffsetX}
+            messageOffsetY={messageDetails.messageOffsetY}
+            messageRotation={messageDetails.messageRotation}
+            messageColor={messageDetails.messageColor}
+            images={images}
+            setImages={setImages}
+            imageRefs={imageRefs}
+            stageRef={stageRef}
+            canvasSize={canvasSize}
+          />
+        </div>
+        <ImagePanel
+          images={images}
+          setImages={setImages}
+          canvasSize={canvasSize}
+          imageRefs={imageRefs}
+        />
       </div>
-
-      <ImagePanel
-        images={images}
-        setImages={setImages}
-        canvasSize={canvasSize}
-        imageRefs={imageRefs}
-      />
     </div>
   );
 }
